@@ -1,5 +1,7 @@
+import { AuthApiError, AuthError } from "@supabase/supabase-js"
 import { clsx, type ClassValue } from "clsx"
 import { DrizzleError } from "drizzle-orm"
+import { NextResponse } from "next/server"
 import { twMerge } from "tailwind-merge"
 import { ZodError } from "zod"
 
@@ -23,12 +25,32 @@ export function getErrorMessage(error: unknown) {
       success: false,
       message: error.message,
     }
-  else {
+  if (error instanceof AuthError || error instanceof AuthApiError)
     return {
       success: false,
-      message: "Server error  ",
+      message: error.message,
     }
+
+  console.error("Unhandled error:", error)
+  return {
+    success: false,
+    message: "An unexpected server error occurred",
   }
+}
+
+export function handleApiError(error: unknown): NextResponse {
+  const errorResponse = getErrorMessage(error)
+
+  const status =
+    error instanceof ZodError || DrizzleError
+      ? 400
+      : error instanceof AuthError
+        ? 401
+        : error instanceof AuthApiError
+          ? 403
+          : 500
+
+  return NextResponse.json(errorResponse, { status })
 }
 
 export async function zFetch<T>(
