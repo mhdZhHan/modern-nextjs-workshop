@@ -4,6 +4,8 @@ import "./globals.css"
 
 import { ClientProvider } from "@/providers/client"
 import { Toaster } from "@/components/ui/toaster"
+import { Toaster as SonnerToaster } from "@/components/ui/sonner"
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,6 +36,7 @@ export default function RootLayout({
         <ClientProvider>
           {children}
           <Toaster />
+          <SonnerToaster />
         </ClientProvider>
       </body>
     </html>
