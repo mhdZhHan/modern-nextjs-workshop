@@ -1,9 +1,9 @@
 import { z } from "zod"
-import { userSchema } from "./user-schema"
+import { userSchema } from "@/db/schema"
 
 export const signupSchema = z
   .object({
-    username: userSchema.shape.username,
+    fullName: userSchema.shape.fullName,
     email: userSchema.shape.email.regex(
       /^[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
       "Invalid email format."

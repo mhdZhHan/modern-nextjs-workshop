@@ -1,16 +1,19 @@
+import { NextRequest } from "next/server"
+import { eq } from "drizzle-orm"
 import { db } from "@/db"
 import { usersTable } from "@/db/schema"
-import { createClient } from "@/lib/supabase/client"
+
 import { handleApiError } from "@/lib/utils"
+import { createClient } from "@/lib/supabase/client"
 import { loginSchema } from "@/lib/zod/auth-schema"
-import { eq } from "drizzle-orm"
-import { NextRequest, NextResponse } from "next/server"
+
+import { zResponse } from "@/zlib"
 
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
 
-    const body = await req.json()
+    const body: unknown = await req.json()
     const { email, password } = loginSchema.parse(body)
 
     const existingUser = await db.query.usersTable.findFirst({
@@ -26,10 +29,10 @@ export async function POST(req: NextRequest) {
 
     if (error) throw error
 
-    return NextResponse.json({
+    return zResponse({
       success: true,
-      message: "Logged in successfully",
-      existingUser,
+      message: "Logged in in successfully",
+      data: existingUser,
     })
   } catch (error) {
     return handleApiError(error)

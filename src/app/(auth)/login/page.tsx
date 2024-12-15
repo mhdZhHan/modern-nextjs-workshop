@@ -1,12 +1,63 @@
 "use client"
-
-import { Loader, Lock, Mail } from "lucide-react"
 import Link from "next/link"
+import { Loader, Lock, Mail } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
+
+// components
 import InputBox from "../(components)/InputBox"
 
+// 
+import { loginSchema, type LoginUser } from "@/lib/zod/auth-schema"
+import { zFetch, ZResponse } from "@/zlib"
+import { User } from "@/db/schema"
+
 const page = () => {
-  const isLoading = false
-  const error = false
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    setError,
+  } = useForm<LoginUser>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  })
+
+  const { mutate: onSubmit, isPending } = useMutation({
+    onMutate: () => {
+      // A callback triggered before the mutation function runs
+      const toastId = toast.loading("Signing in...")
+      return { toastId }
+    },
+    mutationFn: async (signInData: LoginUser) => {
+      const data = await zFetch<ZResponse<User>>("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(signInData),
+      })
+
+      if (!data.success) throw new Error(data.message)
+
+      return data.data!
+    },
+    onSuccess: (data, __, { toastId }) => {
+      toast.success(`Welcome back, ${data.username}!`, {
+        id: toastId,
+      })
+
+      reset()
+    },
+    onError: (error, _, ctx) => {
+      toast.error(error.message, {
+        id: ctx?.toastId,
+      })
+    },
+  })
 
   return (
     <div className="w-full max-w-md overflow-hidden rounded-2xl bg-gray-800 bg-opacity-50 shadow-xl backdrop-blur-xl backdrop-filter">
@@ -15,9 +66,31 @@ const page = () => {
           Welcome back
         </h2>
 
-        <form>
-          <InputBox type="email" icon={Mail} placeholder="Work Email" />
-          <InputBox type="password" icon={Lock} placeholder="Password" />
+        <form onSubmit={handleSubmit((data) => onSubmit(data))}>
+          <InputBox
+            {...register("email")}
+            type="email"
+            icon={Mail}
+            placeholder="Work Email"
+          />
+          {errors.email && (
+            <p className="mb-2 font-semibold text-red-500">
+              {errors.email.message}
+            </p>
+          )}
+
+          <InputBox
+            {...register("password")}
+            type="password"
+            icon={Lock}
+            placeholder="Password"
+            autoComplete="current-password"
+          />
+          {errors.password && (
+            <p className="mb-2 font-semibold text-red-500">
+              {errors.password.message}
+            </p>
+          )}
 
           <div className="mb-6 flex items-center">
             <Link
@@ -28,14 +101,12 @@ const page = () => {
             </Link>
           </div>
 
-          {error && <p className="mt-2 font-semibold text-red-500">{error}</p>}
-
           <button
             className="mt-5 w-full rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 px-4 py-3 font-bold text-white shadow-lg outline-none transition duration-200 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900"
             type="submit"
-            disabled={isLoading}
+            disabled={isSubmitting || isPending}
           >
-            {isLoading ? (
+            {isSubmitting || isPending ? (
               <Loader className="mx-auto size-6 animate-spin text-center" />
             ) : (
               "Login"

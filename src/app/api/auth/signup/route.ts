@@ -1,16 +1,21 @@
+import { NextRequest } from "next/server"
 import { db } from "@/db"
 import { usersTable } from "@/db/schema"
+import { HttpStatus, zResponse } from "@/zlib"
+
 import { createClient } from "@/lib/supabase/server"
 import { handleApiError } from "@/lib/utils"
 import { signupSchema } from "@/lib/zod/auth-schema"
-import { NextRequest, NextResponse } from "next/server"
+import { generateUniqueUsername } from "@/db/utils"
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
+    
+    const body: unknown = await req.json()
+    const { email, password, fullName } = signupSchema.parse(body)
 
-    const body = await req.json()
-    const { email, password, username } = signupSchema.parse(body)
+    const username = await generateUniqueUsername(email);
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -24,9 +29,9 @@ export async function GET(req: NextRequest) {
 
     if (error) throw error
 
-    const { user, session } = data
+    const { user } = data
 
-    if (!user || !session) throw new Error("Signup failed")
+    if (!user) throw new Error("Signup failed")
 
     const newUser = await db
       .insert(usersTable)
@@ -34,18 +39,19 @@ export async function GET(req: NextRequest) {
         id: user.id,
         email,
         username,
+        fullName,
       })
       .returning()
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: "User signup success",
-        data: newUser,
-      },
-      { status: 201 }
-    )
+    return zResponse({
+      success: true,
+      message: "User signup success",
+      status: HttpStatus.OK,
+      data: newUser[0],
+    })
   } catch (error) {
+    console.log("ERROR in SIGNUP", error);
+    
     return handleApiError(error)
   }
 }
