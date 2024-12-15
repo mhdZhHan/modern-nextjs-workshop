@@ -8,5 +8,5 @@ export const db = drizzle({
   client,
   schema,
   casing: "snake_case",
-  logger: true,
+  logger: process.env.NODE_ENV === "development",
 })
