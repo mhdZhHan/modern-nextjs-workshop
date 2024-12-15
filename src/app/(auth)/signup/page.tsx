@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Loader, Lock, Mail, User as UserIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -17,6 +18,9 @@ import { ZResponse, zFetch } from "@/zlib"
 import { User } from "@/db/schema"
 
 const page = () => {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const {
     register,
     handleSubmit,
@@ -48,9 +52,8 @@ const page = () => {
       return data.data!
     },
     onSuccess: (data, __, { toastId }) => {
-      toast.success(`Hello, ${data.username}!`, {
-        id: toastId,
-      })
+      const redirectPath = searchParams.get('redirectedFrom') || '/protected/dashboard'
+      router.push(redirectPath)
 
       reset()
     },
