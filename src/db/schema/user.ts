@@ -1,6 +1,10 @@
+import { relations } from "drizzle-orm"
 import { pgTable } from "drizzle-orm/pg-core"
 import * as c from "drizzle-orm/pg-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
+
+import { postsTable } from "."
+import { commentsTable } from "./comment"
 
 // TABLE SCHEMAS
 export const usersTable = pgTable("users", {
@@ -17,10 +21,16 @@ export const usersTable = pgTable("users", {
     .$onUpdateFn(() => new Date()),
 })
 
-// TYPES
-export type User = typeof usersTable.$inferSelect
-export type NewUser = typeof usersTable.$inferInsert
+// RELATIONS
+export const usersTableRelations = relations(usersTable, ({ many }) => ({
+  posts: many(postsTable),
+  comments: many(commentsTable),
+}))
 
 // ZOD SCHEMAS
 export const userSchema = createSelectSchema(usersTable)
 export const newUserSchema = createInsertSchema(usersTable)
+
+// TYPES
+export type User = typeof usersTable.$inferSelect
+export type NewUser = typeof usersTable.$inferInsert
