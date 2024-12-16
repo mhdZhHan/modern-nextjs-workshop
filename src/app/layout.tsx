@@ -5,6 +5,7 @@ import "./globals.css"
 import { ClientProvider } from "@/providers/client"
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
+import { Wrapper } from "@/components/wrapper"
 
 
 const geistSans = localFont({
@@ -34,7 +35,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ClientProvider>
-          {children}
+          <Wrapper>{children}</Wrapper>
           <Toaster />
           <SonnerToaster />
         </ClientProvider>
