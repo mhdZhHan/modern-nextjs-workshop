@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
 
 // components
-import InputBox from "../(components)/InputBox"
+import InputBox from "./InputBox"
 
 //
 import { loginSchema, type LoginUser } from "@/lib/zod/auth-schema"

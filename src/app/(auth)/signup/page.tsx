@@ -1,7 +1,7 @@
 "use client"
 
 import { Suspense } from "react"
-import SignupForm from "../(components)/SignupForm"
+import SignupForm from "../_components/SignupForm"
 
 const SignupPage = () => {
   return (
