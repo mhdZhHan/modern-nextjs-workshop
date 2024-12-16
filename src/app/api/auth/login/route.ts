@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
 
     if (!existingUser) throw new Error("User not found")
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })

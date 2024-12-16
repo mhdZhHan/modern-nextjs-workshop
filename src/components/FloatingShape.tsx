@@ -20,7 +20,7 @@ function FloatingShape({
   return (
     <div
       className={cn(
-        "animate-float absolute rounded-full opacity-20 blur-xl",
+        "absolute animate-float rounded-full opacity-20 blur-xl",
         color,
         size
       )}

@@ -13,7 +13,7 @@ function InputBox({ icon: Icon, ...props }: InputBoxProps) {
 
       <input
         {...props}
-        className="w-full rounded-lg border border-gray-700 bg-gray-800 bg-opacity-50 py-2 pl-10 pr-3 text-white placeholder-gray-400 transition duration-200 focus:border-green-500 focus:ring-2 focus:ring-green-500 outline-none"
+        className="w-full rounded-lg border border-gray-700 bg-gray-800/50 py-2 pl-10 pr-3 text-white outline-none transition duration-200 placeholder:text-gray-400 focus:border-green-500 focus:ring-2 focus:ring-green-500"
       />
     </div>
   )

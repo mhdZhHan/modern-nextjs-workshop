@@ -15,6 +15,7 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
+          // eslint-disable-next-line unused-imports/no-unused-vars
           cookiesToSet.forEach(({ name, value, options }) =>
             request.cookies.set(name, value)
           )
