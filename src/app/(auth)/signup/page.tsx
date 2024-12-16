@@ -52,7 +52,7 @@ const page = () => {
       return data.data!
     },
     onSuccess: (data, __, { toastId }) => {
-      const redirectPath = searchParams.get('redirectedFrom') || '/protected/dashboard'
+      const redirectPath = searchParams.get('redirectedFrom') || '/dashboard'
       router.push(redirectPath)
 
       reset()
