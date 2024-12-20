@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 
+// components
+import Header from "@/components/common/header"
+
 export default async function ProtectedLayout({
   children,
 }: {
@@ -14,5 +17,11 @@ export default async function ProtectedLayout({
     redirect("/login")
   }
 
-  return <>{children}</>
+  return (
+    <>
+      <Header />
+
+      <main>{children}</main>
+    </>
+  )
 }

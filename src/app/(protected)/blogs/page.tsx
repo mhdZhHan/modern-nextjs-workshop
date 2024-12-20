@@ -1,10 +1,22 @@
-import { wait } from "@/lib/utils"
+import BlogGrid from "@/components/blogs/blogs-grid"
+import Filters from "@/components/common/filter"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
-const page = async () => {
-  await wait(2000)
+export default function page() {
+  // await wait(2000)
+  // if (Math.random() > 10) throw new Error("Random error occurred")
 
-  if (Math.random() > 10) throw new Error("Random error occurred")
+  return (
+    <div className="container mx-auto mt-24">
+      <div className="flex flex-col gap-4 lg:flex-row">
+        <div className="w-full pl-4 lg:w-1/4">
+          <Filters />
+        </div>
 
-  return <div>page</div>
+        <ScrollArea className="h-[calc(100vh-100px)] w-full pr-4">
+          <BlogGrid />
+        </ScrollArea>
+      </div>
+    </div>
+  )
 }
-export default page
