@@ -11,6 +11,7 @@ export default function GlobalError() {
       <body className={inter.className}>
         <div className="flex min-h-screen flex-col items-center justify-center">
           <h2 className="mb-4 text-2xl font-bold">Something went wrong!</h2>
+
           <button
             onClick={() => {
               window.location.reload()

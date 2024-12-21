@@ -16,7 +16,7 @@ type BlogCardProps = {
 
 const BlogCard = ({ post }: BlogCardProps) => {
   return (
-    <Link href={`/blogs/${post.id}`} key={post.id}>
+    <Link href={`/blog/${post.id}`} key={post.id}>
       <Card className="h-full transition-shadow duration-200 hover:shadow-lg">
         <CardHeader>
           <CardTitle className="text-lg">{post.title}</CardTitle>

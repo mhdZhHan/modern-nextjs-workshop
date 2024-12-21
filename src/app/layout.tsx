@@ -2,8 +2,8 @@ import type { Metadata } from "next"
 import localFont from "next/font/local"
 import "./globals.css"
 
-import { ThemeProvider } from "@/providers/theme"
-import { ClientProvider } from "@/providers/client"
+import { ThemeProvider } from "@/providers/theme-provider"
+import { ClientProvider } from "@/providers/client-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 // import { Wrapper } from "@/components/wrapper"
@@ -11,11 +11,6 @@ import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
-  weight: "100 900",
-})
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
   weight: "100 900",
 })
 
@@ -32,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"

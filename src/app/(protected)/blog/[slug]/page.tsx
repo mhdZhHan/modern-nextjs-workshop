@@ -1,32 +1,7 @@
-// import { notFound } from "next/navigation"
-
-// const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
-//   const slug = (await params).slug
-
-//   if (slug === "not-found") {
-//     notFound()
-//   }
-
-//   return <div>page</div>
-// }
-// export default page
-
-"use client"
-
-import { useState } from "react"
-import { useParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
-import CommentSection from "@/components/comment/comment-section"
+import CommentsSheet from "@/components/comment/comments-sheet"
 
-// Mock data for a single blog post
 const blogPost = {
   id: 1,
   title: "Understanding the Basics of React Hooks",
@@ -43,20 +18,30 @@ const blogPost = {
   tags: ["React", "JavaScript", "Web Development"],
 }
 
-export default function BlogPost() {
-  const { slug } = useParams()
-  const [isCommentsOpen, setIsCommentsOpen] = useState(false)
+export default async function BlogPost({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const slug = (await params).slug
+
+  if (slug === "not-found") {
+    notFound()
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto mt-24 px-4 py-8">
       <article className="prose lg:prose-xl mx-auto">
         <h1 className="mb-4 text-4xl font-bold">{blogPost.title}</h1>
+
         <div className="mb-6 flex items-center space-x-4">
           <p className="text-gray-600">{blogPost.date}</p>
           <p className="text-gray-600">By {blogPost.author}</p>
           <Badge>{blogPost.category}</Badge>
         </div>
+
         <div dangerouslySetInnerHTML={{ __html: blogPost.content }} />
+
         <div className="mt-6 flex flex-wrap gap-2">
           {blogPost.tags.map((tag) => (
             <Badge key={tag} variant="outline">
@@ -67,17 +52,7 @@ export default function BlogPost() {
       </article>
 
       <div className="mt-8 text-center">
-        <Sheet open={isCommentsOpen} onOpenChange={setIsCommentsOpen}>
-          <SheetTrigger asChild>
-            <Button>View Comments</Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-[90vw] sm:w-[540px]">
-            <SheetHeader>
-              <SheetTitle>Comments</SheetTitle>
-            </SheetHeader>
-            <CommentSection postId={slug as string} />
-          </SheetContent>
-        </Sheet>
+        <CommentsSheet slug={slug} />
       </div>
     </div>
   )

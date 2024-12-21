@@ -1,10 +1,9 @@
 import { NextRequest } from "next/server"
 import { db } from "@/db"
 import { usersTable } from "@/db/schema"
-import { HttpStatus, zResponse } from "@/zlib"
+import { HttpStatus, zError, zResponse } from "@/zlib"
 
 import { createClient } from "@/lib/supabase/server"
-import { handleApiError } from "@/lib/utils"
 import { signupSchema } from "@/lib/zod/auth-schema"
 import { generateUniqueUsername } from "@/db/utils"
 
@@ -52,6 +51,6 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.log("ERROR in SIGNUP", error);
     
-    return handleApiError(error)
+    return zError(error)
   }
 }

@@ -65,12 +65,16 @@ function CommentComponent({ comment, depth = 0, onReply }: CommentProps) {
           />
           <AvatarFallback>{comment.author[0]}</AvatarFallback>
         </Avatar>
+
         <div className="grow">
           <div className="flex items-center justify-between">
             <h4 className="font-semibold">{comment.author}</h4>
+
             <span className="text-sm text-gray-500">{comment.date}</span>
           </div>
+
           <p className="mt-1">{comment.content}</p>
+
           <div className="mt-2 space-x-2">
             <Button
               variant="ghost"
@@ -99,6 +103,7 @@ function CommentComponent({ comment, depth = 0, onReply }: CommentProps) {
               </Button>
             )}
           </div>
+
           {isReplying && (
             <div className="mt-2">
               <Textarea
@@ -112,6 +117,7 @@ function CommentComponent({ comment, depth = 0, onReply }: CommentProps) {
           )}
         </div>
       </div>
+
       {isExpanded && comment.replies.length > 0 && (
         <div className="mt-2 border-l-2 border-gray-200 pl-4">
           {comment.replies.map((reply) => (
@@ -188,8 +194,10 @@ export default function CommentSection({ postId }: CommentSectionProps) {
           placeholder="Write a comment..."
           className="mb-2"
         />
+
         <Button type="submit">Post Comment</Button>
       </form>
+
       <div className="space-y-6">
         {comments.map((comment) => (
           <CommentComponent

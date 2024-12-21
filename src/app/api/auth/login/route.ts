@@ -3,11 +3,10 @@ import { eq } from "drizzle-orm"
 import { db } from "@/db"
 import { usersTable } from "@/db/schema"
 
-import { handleApiError } from "@/lib/utils"
 import { createClient } from "@/lib/supabase/client"
 import { loginSchema } from "@/lib/zod/auth-schema"
 
-import { zResponse } from "@/zlib"
+import { zError, zResponse } from "@/zlib"
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,6 +34,6 @@ export async function POST(req: NextRequest) {
       data: existingUser,
     })
   } catch (error) {
-    return handleApiError(error)
+    return zError(error)
   }
 }

@@ -42,7 +42,7 @@ export default function Filters() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 border p-4">
       <div>
         <h2 className="mb-2 text-lg font-semibold">Search</h2>
         <Input type="text" placeholder="Search blogs..." />
@@ -50,9 +50,11 @@ export default function Filters() {
 
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="categories">
-          <AccordionTrigger>Categories</AccordionTrigger>
+          <AccordionTrigger className="uppercase hover:no-underline">
+            Categories
+          </AccordionTrigger>
           <AccordionContent>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-1 space-y-2">
               {categories.map((category) => (
                 <div key={category} className="flex items-center">
                   <Checkbox
@@ -70,9 +72,11 @@ export default function Filters() {
         </AccordionItem>
 
         <AccordionItem value="tags">
-          <AccordionTrigger>Tags</AccordionTrigger>
+          <AccordionTrigger className="uppercase hover:no-underline">
+            Tags
+          </AccordionTrigger>
           <AccordionContent>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-1 space-y-2">
               {tags.map((tag) => (
                 <div key={tag} className="flex items-center">
                   <Checkbox
@@ -90,13 +94,15 @@ export default function Filters() {
         </AccordionItem>
 
         <AccordionItem value="date">
-          <AccordionTrigger>Date Range</AccordionTrigger>
+          <AccordionTrigger className="uppercase hover:no-underline">
+            Date Range
+          </AccordionTrigger>
           <AccordionContent>
             <Calendar
               mode="range"
               selected={dateRange}
               // onSelect={setDateRange}
-              className="rounded-md border"
+              className="w-full rounded-md border"
             />
           </AccordionContent>
         </AccordionItem>
