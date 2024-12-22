@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm"
 import { pgTable } from "drizzle-orm/pg-core"
 import * as c from "drizzle-orm/pg-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
+import { z } from "zod"
 
 import { categoriesTable, postToTagsTable, usersTable } from "."
 import { commentsTable } from "./comment"
@@ -48,9 +49,19 @@ export const postsTableRelations = relations(postsTable, ({ one, many }) => ({
 }))
 
 // ZOD SCHEMAS
-export const postSchema = createSelectSchema(postsTable)
-export const newPostSchema = createInsertSchema(postsTable)
+const basePostSchema = createSelectSchema(postsTable)
+export const postSchema = basePostSchema.extend({
+  tagIds: z.array(z.string().uuid()),
+})
+
+const baseNewPostSchema = createInsertSchema(postsTable)
+export const newPostSchema = baseNewPostSchema.extend({
+  tagIds: z.array(z.string().uuid()),
+})
 
 // TYPES
-export type Post = typeof postsTable.$inferSelect
-export type NewPost = typeof postsTable.$inferInsert
+export type Post = z.infer<typeof postSchema>
+export type NewPost = z.infer<typeof newPostSchema>
+
+// export type Post = typeof postsTable.$inferSelect
+// export type NewPost = typeof postsTable.$inferInsert
