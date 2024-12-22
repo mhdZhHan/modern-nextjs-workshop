@@ -7,41 +7,25 @@ import { postsTable } from "."
 import { commentsTable } from "./comment"
 
 // TABLE SCHEMAS
-export const usersTable = pgTable(
-  "users",
-  {
-    id: c.uuid().primaryKey().defaultRandom(),
-    userId: c
-      .text()
-      .notNull()
-      .default(sql`requesting_user_id()`),
-    clerkId: c.text().notNull(),
-    fullName: c.text().notNull(),
-    email: c.text().notNull().unique(),
-    username: c.text().notNull().unique(),
-    profileImg: c.text(),
+export const usersTable = pgTable("users", {
+  id: c.uuid().primaryKey().defaultRandom(),
+  userId: c
+    .text()
+    .notNull()
+    .default(sql`requesting_user_id()`),
+  clerkId: c.text().notNull(),
+  fullName: c.text().notNull(),
+  email: c.text().notNull().unique(),
+  username: c.text().notNull().unique(),
+  profileImg: c.text(),
 
-    createdAt: c.timestamp().notNull().defaultNow(),
-    updatedAt: c
-      .timestamp()
-      .notNull()
-      .defaultNow()
-      .$onUpdateFn(() => new Date()),
-  },
-  () => [
-    c.pgPolicy("INSERT", {
-      as: "permissive",
-      for: "insert",
-      to: ["authenticated"],
-      withCheck: sql`(requesting_user_id() = user_id)`,
-    }),
-    c.pgPolicy("SELECT", {
-      as: "permissive",
-      for: "select",
-      to: ["authenticated"],
-    }),
-  ]
-)
+  createdAt: c.timestamp().notNull().defaultNow(),
+  updatedAt: c
+    .timestamp()
+    .notNull()
+    .defaultNow()
+    .$onUpdateFn(() => new Date()),
+})
 
 // RELATIONS
 export const usersTableRelations = relations(usersTable, ({ many }) => ({

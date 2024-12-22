@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1734157406767,
-      "tag": "0000_little_nextwave",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1734266553951,
-      "tag": "0001_overconfident_iron_monger",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1734357271915,
-      "tag": "0002_fair_mandroid",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1734848361271,
-      "tag": "0003_large_sheva_callister",
+      "when": 1734850240412,
+      "tag": "0000_useful_nighthawk",
       "breakpoints": true
     }
   ]
