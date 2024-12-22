@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server"
 import { Webhook } from "svix"
 import { headers } from "next/headers"
 import { WebhookEvent } from "@clerk/nextjs/server"
+import { NextResponse } from "next/server"
 
 import { db } from "@/db"
-import { usersTable } from "@/db/schema"
+import { NewUser, usersTable } from "@/db/schema"
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -38,47 +38,53 @@ export async function POST(req: Request) {
 
   let evt: WebhookEvent
 
+  // Verify the payload with the headers
   try {
     evt = wh.verify(body, {
       "svix-id": svix_id,
-      "svix-signature": svix_signature,
       "svix-timestamp": svix_timestamp,
+      "svix-signature": svix_signature,
     }) as WebhookEvent
-  } catch (error) {
-    console.log("Error verifying the webhook", error)
-    return new Response("Error occurred", { status: 400 })
+  } catch (err) {
+    console.error("Error verifying webhook:", err)
+    return new Response("Error occured", {
+      status: 400,
+    })
   }
 
+  // Do something with the payload
+  // For this guide, you simply log the payload to the console
+  const { id } = evt.data
   const eventType = evt.type
+
   if (eventType === "user.created") {
-    const { id, email_addresses, first_name, last_name, username } = evt.data
+    const { id, email_addresses, first_name, last_name, username, image_url } =
+      evt.data
     const email = email_addresses[0]?.email_address
     const fullName = `${first_name || ""} ${last_name || ""}`.trim()
 
-    try {
-      // user creation
-      const newUser = await db
-        .insert(usersTable)
-        .values({
-          id: id,
-          email,
-          username: username!,
-          fullName,
-        })
-        .returning()
+    const userDate: NewUser = {
+      clerkId: id,
+      fullName,
+      username: username!,
+      email,
+      profileImg: image_url!,
+    }
 
-      // TODO: Send a welcome email later
+    const newUser = await db.insert(usersTable).values(userDate).returning()
 
-      return NextResponse.json({
+    return NextResponse.json(
+      {
         success: true,
         message: "User created",
-        user: newUser,
-      })
-    } catch (error) {
-      console.error("Error creating user", error)
-      return NextResponse.json("Error creating user", { status: 500 })
-    }
+        user: newUser[0],
+      },
+      { status: 200 }
+    )
   }
+
+  console.log(`Webhook with and ID of ${id} and type of ${eventType}`)
+  console.log("Webhook body:", body)
 
   return new Response("", { status: 200 })
 }
