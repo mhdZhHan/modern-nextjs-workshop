@@ -10,7 +10,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:update": "drizzle-kit generate && drizzle-kit migrate",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "db:seed": "bun run src/db/seed.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.9.6",
