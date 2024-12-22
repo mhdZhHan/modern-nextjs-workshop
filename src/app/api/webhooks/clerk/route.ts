@@ -65,6 +65,7 @@ export async function POST(req: Request) {
 
     const userDate: NewUser = {
       clerkId: id,
+      userId: id,
       fullName,
       username: username!,
       email,
