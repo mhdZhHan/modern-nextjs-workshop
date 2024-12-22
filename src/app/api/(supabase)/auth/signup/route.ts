@@ -39,6 +39,8 @@ export async function POST(req: NextRequest) {
         email,
         username,
         fullName,
+        // *******
+        clerkId: user.id,
       })
       .returning()
 
