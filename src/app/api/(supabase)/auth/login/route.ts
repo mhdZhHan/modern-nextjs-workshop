@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server"
 import { eq } from "drizzle-orm"
 import { db } from "@/db"
-import { usersTable } from "@/db/schema"
+import { User, usersTable } from "@/db/schema"
 
 import { createClient } from "@/lib/supabase/client"
 import { loginSchema } from "@/lib/zod/auth-schema"
@@ -28,12 +28,12 @@ export async function POST(req: NextRequest) {
 
     if (error) throw error
 
-    return zResponse({
+    return zResponse<User>({
       success: true,
       message: "Logged in in successfully",
       data: existingUser,
     })
   } catch (error) {
-    return zError(error)
+    return zResponse(zError(error))
   }
 }

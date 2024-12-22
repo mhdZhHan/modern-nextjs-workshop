@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server"
 import { db } from "@/db"
-import { usersTable } from "@/db/schema"
+import { User, usersTable } from "@/db/schema"
 import { HttpStatus, zError, zResponse } from "@/zlib"
 
 import { createClient } from "@/lib/supabase/server"
@@ -10,11 +10,11 @@ import { generateUniqueUsername } from "@/db/utils"
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     const body: unknown = await req.json()
     const { email, password, fullName } = signupSchema.parse(body)
 
-    const username = await generateUniqueUsername(email);
+    const username = await generateUniqueUsername(email)
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -42,15 +42,15 @@ export async function POST(req: NextRequest) {
       })
       .returning()
 
-    return zResponse({
+    return zResponse<User>({
       success: true,
       message: "User signup success",
       status: HttpStatus.OK,
       data: newUser[0],
     })
   } catch (error) {
-    console.log("ERROR in SIGNUP", error);
-    
-    return zError(error)
+    console.log("ERROR in SIGNUP", error)
+
+    return zResponse(zError(error))
   }
 }

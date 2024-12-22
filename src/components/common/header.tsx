@@ -1,6 +1,18 @@
 import Link from "next/link"
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
+
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "./theme-toggle"
+
+const NAV_LINKS = [
+  { href: "/", text: "Home" },
+  { href: "/blog", text: "Blogs" },
+]
+
+const BUTTONS = [
+  { href: "/editor", text: "Editor" },
+  { href: "/dashboard", text: "Dashboard" },
+]
 
 export default function Header() {
   return (
@@ -11,18 +23,34 @@ export default function Header() {
         </Link>
 
         <nav className="mt-4 flex w-full items-center space-x-4 md:mt-0 md:w-auto">
-          <Link href="/" className="hover:text-primary">
-            Home
-          </Link>
-          <Link href="/blogs" className="hover:text-primary">
-            Blogs
-          </Link>
-          <Link href="/about" className="hover:text-primary">
-            About
-          </Link>
-          <Button asChild variant="outline">
-            <Link href="/dashboard">Dashboard</Link>
-          </Button>
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="hover:text-primary"
+            >
+              {link.text}
+            </Link>
+          ))}
+
+          {BUTTONS.map((button, index) => (
+            <Button
+              key={button.href}
+              asChild
+              variant={index === BUTTONS.length - 1 ? "default" : "outline"}
+            >
+              <Link href={button.href}>{button.text}</Link>
+            </Button>
+          ))}
+
+          <SignedOut>
+            <SignInButton />
+          </SignedOut>
+
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+
           <ThemeToggle />
         </nav>
       </div>
