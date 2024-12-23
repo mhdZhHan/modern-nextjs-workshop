@@ -7,7 +7,7 @@ export default function page() {
   // if (Math.random() > 10) throw new Error("Random error occurred")
 
   return (
-    <div className="container mx-auto mt-24">
+    <div className="container mx-auto pt-24">
       <div className="flex flex-col gap-4 lg:flex-row">
         <div className="w-full pl-4 lg:w-1/4">
           <Filters />

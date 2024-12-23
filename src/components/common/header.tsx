@@ -4,10 +4,7 @@ import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "./theme-toggle"
 
-const NAV_LINKS = [
-  { href: "/", text: "Home" },
-  { href: "/blog", text: "Blogs" },
-]
+const NAV_LINKS = [{ href: "/blog", text: "Blogs" }]
 
 const BUTTONS = [
   { href: "/editor", text: "Editor" },
