@@ -13,8 +13,9 @@ export const postsTable = pgTable("posts", {
   id: c.uuid().primaryKey().defaultRandom(),
   title: c.varchar({ length: 255 }).notNull(),
   slug: c.varchar({ length: 255 }).notNull(),
+  banner: c.text().notNull(),
   shortDescription: c.text(),
-  content: c.text().notNull(),
+  content: c.jsonb().notNull(),
   authorId: c
     .uuid()
     .notNull()
