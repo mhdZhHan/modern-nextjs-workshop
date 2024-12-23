@@ -20,10 +20,7 @@ const BlogEditor = () => {
   }
 
   const handleTitleChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
-    // avoid scrolling and adjusting height based on the title
     const input = evt.target
-
-    input.style.height = "auto"
     input.style.height = input.scrollHeight + "px"
   }
 
