@@ -42,7 +42,7 @@ export default function Filters() {
   }
 
   return (
-    <div className="space-y-6 border p-4">
+    <div className="border p-4">
       <div>
         <h2 className="mb-2 text-lg font-semibold">Search</h2>
         <Input type="text" placeholder="Search blogs..." />

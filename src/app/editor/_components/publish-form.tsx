@@ -48,19 +48,16 @@ const PublishForm = () => {
         <X size={25} />
       </Button>
 
-      <div className="center max-w-[550px]">
-        <p className="text-dark-grey mb-1">Preview</p>
+      <div className="max-w-[550px]">
+        <p className="text-dark-grey mb-4">Preview</p>
 
-        <div className="bg-grey mt-4 aspect-video w-full overflow-hidden rounded-lg">
+        <div className="bg-grey aspect-video w-full overflow-hidden rounded-lg">
           <Image
             src={blogData.banner}
-            quality={100}
             alt="banner"
+            className="h-full w-full"
             width={100}
             height={100}
-            objectFit="cover"
-            priority
-            className="h-full w-full"
           />
         </div>
 
@@ -74,7 +71,7 @@ const PublishForm = () => {
       </div>
 
       <div className="border-grey lg:border-1 lg:pl-8">
-        <p className="text-dark-grey mb-2 mt-9">Blog Title</p>
+        <p className="text-dark-grey mb-2">Blog Title</p>
         <Input
           type="text"
           placeholder="Blog Title"
@@ -91,7 +88,7 @@ const PublishForm = () => {
           onChange={handleBlogDescription}
           onKeyDown={handleShortDescKeyDown}
         />
-        <p className="text-dark-grey mt-1 text-right text-sm">
+        <p className="text-dark-grey mt-4 text-right text-sm">
           {SHORT_DESCRIPTION_CHAR_LIMIT -
             (blogData.shortDescription?.length || 0)}{" "}
           Characters left
@@ -103,7 +100,7 @@ const PublishForm = () => {
         <div className="relative">
           <Input type="text" placeholder="Topic" />
         </div>
-        <p className="text-dark-grey mt-1 text-right text-sm">
+        <p className="text-dark-grey mt-4 text-right text-sm">
           {TAGS_LIMIT} Tags left
         </p>
 

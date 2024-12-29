@@ -1,4 +1,5 @@
 import Header from "@/components/common/header"
+// import Footer from "@/components/common/footer"
 
 export default async function ProtectedLayout({
   children,
@@ -10,6 +11,8 @@ export default async function ProtectedLayout({
       <Header />
 
       <main>{children}</main>
+
+      {/* <Footer /> */}
     </>
   )
 }
