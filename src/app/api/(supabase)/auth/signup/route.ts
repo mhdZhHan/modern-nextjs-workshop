@@ -3,13 +3,13 @@ import { db } from "@/db"
 import { User, usersTable } from "@/db/schema"
 import { HttpStatus, zError, zResponse } from "@/zlib"
 
-import { createClient } from "@/lib/supabase/server"
+import { createClerkSupabaseClientSsr } from "@/lib/supabase/server"
 import { signupSchema } from "@/lib/zod/auth-schema"
 import { generateUniqueUsername } from "@/db/utils"
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = await createClerkSupabaseClientSsr()
 
     const body: unknown = await req.json()
     const { email, password, fullName } = signupSchema.parse(body)

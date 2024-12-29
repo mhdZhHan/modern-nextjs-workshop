@@ -3,14 +3,14 @@ import { eq } from "drizzle-orm"
 import { db } from "@/db"
 import { User, usersTable } from "@/db/schema"
 
-import { createClient } from "@/lib/supabase/client"
+import { createClerkSupabaseClientSsr } from "@/lib/supabase/server"
 import { loginSchema } from "@/lib/zod/auth-schema"
 
 import { zError, zResponse } from "@/zlib"
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = await createClerkSupabaseClientSsr()
 
     const body: unknown = await req.json()
     const { email, password } = loginSchema.parse(body)
