@@ -19,9 +19,9 @@ export const commentsTable = pgTable("comments", {
     .notNull()
     .references((): c.AnyPgColumn => commentsTable.id),
   authorId: c
-    .uuid()
+    .text()
     .notNull()
-    .references(() => usersTable.id),
+    .references(() => usersTable.clerkId),
 
   createdAt: c.timestamp().defaultNow().notNull(),
   updatedAt: c
@@ -35,7 +35,7 @@ export const commentsTable = pgTable("comments", {
 export const commentsTableRelations = relations(commentsTable, ({ one }) => ({
   author: one(usersTable, {
     fields: [commentsTable.authorId],
-    references: [usersTable.id],
+    references: [usersTable.clerkId],
   }),
 
   post: one(postsTable, {

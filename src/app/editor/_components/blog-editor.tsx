@@ -1,40 +1,28 @@
 "use client"
 
-import { useState } from "react"
-import EditorNavBar from "./editor-navbar"
+import Image from "next/image"
 import { useSession } from "@clerk/nextjs"
+import { JSONContent } from "novel"
 
-import type { JSONContent } from "novel"
+// components
+import EditorNavBar from "./editor-navbar"
 import Editor from "@/components/editor/noval-editor"
 import PublishForm from "./publish-form"
-import { NewPost } from "@/db/schema"
-import { toast } from "@/hooks/use-toast"
 
-// Constants
-import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from "@/lib/constants"
-
-// lib
-import { createClerkSupabaseClient } from "@/lib/supabase/client"
+import { uploadFileToStorage } from "@/utils/uploadFile"
+import { useBlogStore } from "@/store/useBlogStore"
+import { ACCEPTED_IMAGE_TYPES } from "@/lib/constants"
 
 const BlogEditor = () => {
-  const [editorState, seEditorState] = useState<"editor" | "publish">("editor")
-  const [blogContent, setBlogContent] = useState<JSONContent>()
-  const [blogData, setBlogData] = useState<NewPost>({
-    title: "",
-    authorId: "",
-    banner: "",
-    categoryId: "",
-    content: "",
-    slug: "",
-    tagIds: [],
-  })
-  const [bannerPreview, setBannerPreview] = useState<string>(
-    "/blog-banner-dark.png"
-  )
-
   const { session } = useSession()
+  const {
+    blogData,
+    updateBlogData,
+    editorState,
+    bannerPreview,
+    setBannerPreview,
+  } = useBlogStore()
 
-  // ANCHOR: Title Events
   const handleTitleKeyDown = (
     evt: React.KeyboardEvent<HTMLTextAreaElement>
   ) => {
@@ -45,71 +33,53 @@ const BlogEditor = () => {
 
   const handleTitleChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
     const input = evt.target
-    input.style.height = "auto"
-    input.style.height = input.scrollHeight + "px"
 
-    setBlogData((prev) => ({
-      ...prev,
-      title: input.value,
-    }))
+    // adjust the textarea height
+    input.style.height = "auto"
+    input.style.height = `${input.scrollHeight}px`
+
+    updateBlogData({ title: input.value })
   }
 
-  // ANCHOR: Banner Upload
   const handleBannerUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0]
+
     if (!file) return
 
-    const supabase = createClerkSupabaseClient(session)
-
-    try {
-      const fileName = `banners/${Date.now()}_${file.name}`
-      const { data, error } = await supabase.storage
-        .from("inkspire_assets")
-        .upload(fileName, file)
-
-      if (error) {
-        throw error
-      }
-      console.log("File uploaded successfully:", data)
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("inkspire_assets").getPublicUrl(fileName)
-      console.log("Public URL:", publicUrl)
-    } catch (error) {
-      console.error("Error uploading banner:", error)
-    }
-  }
-
-  // ANCHOR: Verify publish
-  const verifyBlogPublish = () => {
-    if (!blogData.banner.length) {
-      return toast({
-        title: "Upload a blog banner to publish it",
-      })
-    }
-
-    if (!blogData.title.length) {
-      return toast({
-        title: "Write blog title to publish it",
-      })
-    }
-    seEditorState("publish")
+    await uploadFileToStorage({
+      file,
+      bucketName: "inkspire_assets",
+      folderName: "banners",
+      session,
+      onSuccess: (publicUrl) => {
+        setBannerPreview(publicUrl)
+        updateBlogData({ banner: publicUrl })
+        console.log("Banner uploaded successfully. Public URL:", publicUrl)
+      },
+      onError: (error) => {
+        console.error("Error uploading banner:", error)
+      },
+    })
   }
 
   return (
     <>
-      {editorState ? (
+      {editorState === "editor" ? (
         <>
-          <EditorNavBar handleBlogPublish={verifyBlogPublish} />
+          <EditorNavBar />
 
           <div className="z-50 mx-auto w-full max-w-[900px] pb-8 pt-24">
             <div className="border-grey aspect-video border-4 hover:opacity-80">
               <label htmlFor="uploadBanner">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={bannerPreview} alt="blog-banner" />
+                <Image
+                  src={bannerPreview}
+                  alt="Banner preview"
+                  width={400}
+                  height={200}
+                  className="h-full w-full cursor-pointer"
+                />
                 <input
                   type="file"
                   id="uploadBanner"
@@ -129,23 +99,15 @@ const BlogEditor = () => {
             />
 
             <Editor
-              initialValue={blogContent}
+              initialValue={blogData.content as JSONContent}
               onChange={(newValue) => {
-                setBlogContent(newValue)
-                setBlogData((prev) => ({
-                  ...prev,
-                  content: newValue,
-                }))
+                updateBlogData({ content: newValue })
               }}
             />
           </div>
         </>
       ) : (
-        <PublishForm
-          seEditorState={seEditorState}
-          blogData={blogData}
-          setBlogData={setBlogData}
-        />
+        <PublishForm />
       )}
     </>
   )

@@ -1,4 +1,4 @@
-export const MAX_FILE_SIZE = 5000000 // 5MB
+export const MAX_FILE_SIZE = 9000000 // 9MB
 
 export const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
@@ -6,3 +6,7 @@ export const ACCEPTED_IMAGE_TYPES = [
   "image/png",
   "image/webp",
 ]
+
+export const SHORT_DESCRIPTION_CHAR_LIMIT=200
+
+export const TAGS_LIMIT = 10

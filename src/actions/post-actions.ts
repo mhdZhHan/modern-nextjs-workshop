@@ -24,14 +24,7 @@ export async function createNewPost(data: NewPost) {
           .returning({ postId: postsTable.id })
       )[0]
 
-      if (validatedData.tagIds.length > 0) {
-        await db.insert(postToTagsTable).values(
-          validatedData.tagIds.map((tagId) => ({
-            postId,
-            tagId,
-          }))
-        )
-      }
+      console.log(postId)
 
       revalidatePath(`/dashboard`)
     },
@@ -55,13 +48,6 @@ export async function updatePost(data: NewPost) {
         .delete(postToTagsTable)
         .where(eq(postToTagsTable.postId, validatedData.id!))
 
-      // and update with new tags or reinsert tags
-      await db.insert(postToTagsTable).values(
-        validatedData.tagIds.map((tagId) => ({
-          postId: validatedData.id!,
-          tagId,
-        }))
-      )
       revalidatePath(`/dashboard`)
     },
     isProtected: true,

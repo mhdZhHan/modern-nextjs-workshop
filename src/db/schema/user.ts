@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm"
+import { relations } from "drizzle-orm"
 import { pgTable } from "drizzle-orm/pg-core"
 import * as c from "drizzle-orm/pg-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
@@ -9,11 +9,7 @@ import { commentsTable } from "./comment"
 // TABLE SCHEMAS
 export const usersTable = pgTable("users", {
   id: c.uuid().primaryKey().defaultRandom(),
-  userId: c
-    .text()
-    .notNull()
-    .default(sql`requesting_user_id()`),
-  clerkId: c.text().notNull(),
+  clerkId: c.text().notNull().unique(),
   fullName: c.text().notNull(),
   email: c.text().notNull().unique(),
   username: c.text().notNull().unique(),
