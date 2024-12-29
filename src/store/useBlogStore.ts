@@ -5,7 +5,28 @@ import {
   deletePostById,
   updatePost,
 } from "@/actions/post-actions"
-import { NewPost } from "@/db/schema"
+
+import { z } from "zod"
+import { slugify } from "@/utils"
+
+export const newPostSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  slug: z.string().min(1, "Slug is required"),
+  banner: z.string().url("Banner must be a valid URL"),
+  content: z
+    .record(z.any())
+    .refine(
+      (content) => Object.keys(content).length > 0,
+      "Content cannot be empty"
+    ),
+  shortDescription: z.string().min(1, "Short description is required"),
+  categoryId: z
+    .string()
+    .uuid("Category ID must be a valid UUID"),
+  status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).default("DRAFT"),
+})
+
+export type NewPost = z.infer<typeof newPostSchema>
 
 type BlogStore = {
   editorState: "editor" | "publish"
@@ -24,94 +45,83 @@ type BlogStore = {
   publishPost: () => Promise<void>
   saveDraft: () => Promise<void>
   deleteBlog: (id: string) => Promise<void>
-
-  // Validation
-  validateBlogData: () => boolean
-}
-
-const initialBlogData: NewPost = {
-  title: "",
-  slug: "",
-  banner: "",
-  content: "",
-  shortDescription: "",
-  authorId: "",
-  categoryId: "21bf8172-0de9-4f68-b8cd-dd9f5d56d658",
-  status: "DRAFT",
 }
 
 export const useBlogStore = create<BlogStore>()((set, get) => ({
   editorState: "editor",
   isSubmitting: false,
   isDirty: false,
-  blogData: initialBlogData,
+  blogData: newPostSchema.safeParse({}).success
+    ? newPostSchema.parse({})
+    : {
+        title: "",
+        slug: "",
+        shortDescription: "",
+        banner: "",
+        content: {},
+        categoryId: "15301e77-42ed-4a32-904c-039739f71819",
+        status: "DRAFT",
+      },
   bannerPreview: "/blog-banner-dark.png",
 
   setEditorState: (state) => set({ editorState: state }),
   setBannerPreview: (url) => set({ bannerPreview: url }),
 
   updateBlogData: (data) => {
-    set((state) => ({
-      blogData: { ...state.blogData, ...data },
-      isDirty: true,
-    }))
+    set((state) => {
+      const updatedData = { ...state.blogData, ...data }
+
+      if (
+        data.title &&
+        (!updatedData.slug || updatedData.title !== state.blogData.title)
+      ) {
+        updatedData.slug = slugify(updatedData.title)
+      }
+
+      return {
+        blogData: updatedData,
+        isDirty: true,
+      }
+    })
   },
 
   resetBlogData: () => {
     set({
-      blogData: initialBlogData,
+      blogData: newPostSchema.parse({}),
       bannerPreview: "/blog-banner-dark.png",
       isDirty: false,
       editorState: "editor",
     })
   },
 
-  // Validation
-  validateBlogData: () => {
-    const { blogData } = get()
-
-    if (!blogData.banner) {
-      toast.error("Please upload a banner image")
-      return false
-    }
-
-    if (!blogData.title.trim()) {
-      toast.error("Please add a blog title")
-      return false
-    }
-
-    if (!blogData.content) {
-      toast.error("Please add some content to your blog")
-      return false
-    }
-
-    if (!blogData.shortDescription?.trim()) {
-      toast.error("Please add a short description")
-      return false
-    }
-
-    if (!blogData.categoryId) {
-      toast.error("Please select a category")
-      return false
-    }
-
-    return true
-  },
-
   // Form Submission
   publishPost: async () => {
-    const { blogData, validateBlogData } = get()
+    const { blogData } = get()
 
-    if (!validateBlogData()) return
+    const validatedData = newPostSchema.safeParse(blogData)
+
+    if (!validatedData.success) {
+      const errorMessage = validatedData.error.issues.map(
+        (issue) => issue.message
+      )
+
+      toast.error(errorMessage)
+      return
+    }
 
     set({ isSubmitting: true })
 
     try {
-      await createNewPost({
+      const result = await createNewPost({
         ...blogData,
         status: "PUBLISHED",
       })
-      toast.success("Blog post published successfully")
+
+      if (result.success) {
+        toast.success("Blog post published successfully")
+      } else {
+        toast.error(result.message)
+      }
       set({ isDirty: false })
     } catch (error) {
       console.error("Error publishing post:", error)
@@ -142,11 +152,6 @@ export const useBlogStore = create<BlogStore>()((set, get) => ({
 
   archivePost: async () => {
     const { blogData } = get()
-
-    if (!blogData.id) {
-      toast.error("Cannot archive an unsaved post")
-      return
-    }
 
     set({ isSubmitting: true })
 

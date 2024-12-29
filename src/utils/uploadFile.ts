@@ -28,7 +28,7 @@ export const uploadFileToStorage = async ({
   }
 
   if (file.size > MAX_FILE_SIZE) {
-    toast.error("File size exceeds 5MB. Please upload a smaller file.", {
+    toast.error("File size exceeds 9MB. Please upload a smaller file.", {
       position: "top-center",
     })
     return

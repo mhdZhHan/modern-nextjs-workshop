@@ -2,7 +2,6 @@
 
 import Image from "next/image"
 import { useSession } from "@clerk/nextjs"
-import { JSONContent } from "novel"
 
 // components
 import EditorNavBar from "./editor-navbar"
@@ -12,6 +11,7 @@ import PublishForm from "./publish-form"
 import { uploadFileToStorage } from "@/utils/uploadFile"
 import { useBlogStore } from "@/store/useBlogStore"
 import { ACCEPTED_IMAGE_TYPES } from "@/lib/constants"
+import { JSONContent } from "novel"
 
 const BlogEditor = () => {
   const { session } = useSession()
@@ -75,6 +75,9 @@ const BlogEditor = () => {
               <label htmlFor="uploadBanner">
                 <Image
                   src={bannerPreview}
+                  quality={100}
+                  objectFit="cover"
+                  priority
                   alt="Banner preview"
                   width={400}
                   height={200}
@@ -93,7 +96,7 @@ const BlogEditor = () => {
             <textarea
               placeholder="Blog Title"
               value={blogData.title}
-              className="mt-10 h-20 w-full resize-none bg-inherit text-4xl font-medium leading-tight outline-none placeholder:opacity-40"
+              className="mt-6 h-16 w-full resize-none bg-inherit text-4xl font-medium leading-tight outline-none placeholder:opacity-40"
               onKeyDown={handleTitleKeyDown}
               onChange={handleTitleChange}
             />

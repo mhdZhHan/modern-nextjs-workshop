@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { X } from "lucide-react"
+import { Loader, X } from "lucide-react"
 
 // components
 import { Button } from "@/components/ui/button"
@@ -54,9 +54,12 @@ const PublishForm = () => {
         <div className="bg-grey mt-4 aspect-video w-full overflow-hidden rounded-lg">
           <Image
             src={blogData.banner}
+            quality={100}
             alt="banner"
             width={100}
             height={100}
+            objectFit="cover"
+            priority
             className="h-full w-full"
           />
         </div>
@@ -79,7 +82,7 @@ const PublishForm = () => {
           onChange={handleBlogTitle}
         />
 
-        <p className="text-dark-grey mb-2 mt-9">
+        <p className="text-dark-grey mb-2 mt-6">
           Short description about your blog
         </p>
         <Textarea
@@ -88,20 +91,19 @@ const PublishForm = () => {
           onChange={handleBlogDescription}
           onKeyDown={handleShortDescKeyDown}
         />
-
         <p className="text-dark-grey mt-1 text-right text-sm">
           {SHORT_DESCRIPTION_CHAR_LIMIT -
             (blogData.shortDescription?.length || 0)}{" "}
           Characters left
         </p>
 
-        <p className="text-dark-grey mb-2 mt-9">
+        <p className="text-dark-grey mb-2 mt-6">
           Topics - (Helps in searching and ranking your blog post)
         </p>
-        <div className="relative py-2 pb-4">
+        <div className="relative">
           <Input type="text" placeholder="Topic" />
         </div>
-        <p className="text-dark-grey mb-2 mt-1 text-right text-sm">
+        <p className="text-dark-grey mt-1 text-right text-sm">
           {TAGS_LIMIT} Tags left
         </p>
 
@@ -111,7 +113,7 @@ const PublishForm = () => {
           onClick={publishPost}
           disabled={isSubmitting || blogData.status === "PUBLISHED"}
         >
-          Publish
+          {isSubmitting && <Loader className="size-4 animate-spin" />} Publish
         </Button>
       </div>
     </section>

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { eq } from "drizzle-orm"
+import { auth } from "@clerk/nextjs/server"
 
 import { executeAction } from "@/db/utils"
 import { db } from "@/db"
@@ -12,15 +13,17 @@ import {
   postsTable,
 } from "@/db/schema"
 
-export async function createNewPost(data: NewPost) {
+export async function createNewPost(data: Omit<NewPost, "authorId">) {
+  const { userId } = await auth()
+
   return executeAction({
     queryFn: async () => {
-      const validatedData = newPostSchema.parse(data)
+      const validatedData = newPostSchema.omit({ authorId: true }).parse(data)
 
       const { postId } = (
         await db
           .insert(postsTable)
-          .values(validatedData)
+          .values({ ...validatedData, authorId: userId! })
           .returning({ postId: postsTable.id })
       )[0]
 
@@ -34,13 +37,16 @@ export async function createNewPost(data: NewPost) {
   })
 }
 
-export async function updatePost(data: NewPost) {
+export async function updatePost(data: Omit<NewPost, "authorId">) {
+  const { userId } = await auth()
+
   return executeAction({
     queryFn: async () => {
-      const validatedData = newPostSchema.parse(data)
+      const validatedData = newPostSchema.omit({ authorId: true }).parse(data)
+
       await db
         .update(postsTable)
-        .set(validatedData)
+        .set({...validatedData, authorId: userId!})
         .where(eq(postsTable.id, validatedData.id!))
 
       // delete tags

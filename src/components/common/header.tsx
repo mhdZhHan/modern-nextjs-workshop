@@ -1,5 +1,4 @@
 import Link from "next/link"
-import Image from "next/image"
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 
 import { Button } from "@/components/ui/button"
@@ -18,14 +17,9 @@ const BUTTONS = [
 export default function Header() {
   return (
     <header className="fixed left-0 right-0 top-0 border-b bg-background">
-      <div className="container mx-auto flex flex-wrap items-center justify-between px-4 py-4">
-        <Link href="/blog" className="text-2xl font-bold">
-          <Image
-            src={"/logo-white.svg"}
-            alt="inkspire-logo"
-            width={200}
-            height={2000}
-          />
+      <div className="container mx-auto flex flex-wrap items-center justify-between px-6 py-2">
+        <Link href="/blog" className="text-2xl">
+          Inkspire
         </Link>
 
         <nav className="mt-4 flex w-full items-center space-x-4 md:mt-0 md:w-auto">
