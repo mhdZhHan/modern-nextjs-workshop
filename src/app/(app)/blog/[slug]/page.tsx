@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation"
+import { Calendar, User2 } from "lucide-react"
+
 import { Badge } from "@/components/ui/badge"
 import CommentsSheet from "@/components/comment/comments-sheet"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
 
 const blogPost = {
   id: 1,
@@ -30,19 +34,30 @@ export default async function BlogPost({
   }
 
   return (
-    <div className="container mx-auto mt-24 px-4 py-8">
-      <article className="prose lg:prose-xl mx-auto">
-        <h1 className="mb-4 text-4xl font-bold">{blogPost.title}</h1>
+    <ScrollArea className="relative h-[calc(100vh-76.8px)] w-full pr-4">
+      <article className="prose prose-zinc mx-auto pb-4 dark:prose-invert md:prose-base lg:prose-lg">
+        <h1 className="text-3xl font-bold">{blogPost.title}</h1>
 
-        <div className="mb-6 flex items-center space-x-4">
-          <p className="text-gray-600">{blogPost.date}</p>
-          <p className="text-gray-600">By {blogPost.author}</p>
+        <div className="mb-4 flex items-center gap-2">
+          <Calendar className="size-4" />
+          <span>{blogPost.date}</span>
+
+          <User2 className="size-4" />
+          <span>By {blogPost.author}</span>
+
           <Badge>{blogPost.category}</Badge>
+
+          <CommentsSheet slug={slug} />
         </div>
+
+        <Separator />
 
         <div dangerouslySetInnerHTML={{ __html: blogPost.content }} />
 
-        <div className="mt-6 flex flex-wrap gap-2">
+        <Separator />
+
+        <h3>Tags</h3>
+        <div className="flex flex-wrap gap-2">
           {blogPost.tags.map((tag) => (
             <Badge key={tag} variant="outline">
               {tag}
@@ -50,10 +65,6 @@ export default async function BlogPost({
           ))}
         </div>
       </article>
-
-      <div className="mt-8 text-center">
-        <CommentsSheet slug={slug} />
-      </div>
-    </div>
+    </ScrollArea>
   )
 }

@@ -38,15 +38,11 @@ export async function getRelatedPostsByCategoryId(categoryId: string) {
   })
 }
 
-export async function getPosts({
-  page,
-  limit,
-  searchTerm,
-}: {
-  page: number
-  limit: number
+export async function getPosts(
+  page: number,
+  limit: number,
   searchTerm?: string
-}) {
+) {
   return executeQuery({
     queryFn: async () =>
       await db
@@ -55,19 +51,19 @@ export async function getPosts({
         .orderBy(desc(postsTable.createdAt))
         .limit(limit)
         .offset(page * limit)
-        .where(ilike(postsTable.title, `%${searchTerm || ""}`)),
+        .where(ilike(postsTable.title, `%${searchTerm || ""}%`)),
     isProtected: false,
     serverErrorMessage: "Getting posts",
   })
 }
 
-export async function getPostsCount(searchParams: string) {
+export async function getPostsCount(searchTerm?: string) {
   return executeQuery({
     queryFn: async () =>
       await db
         .select({ count: count() })
         .from(postsTable)
-        .where(ilike(postsTable.title, `%${searchParams || ""}`))
+        .where(ilike(postsTable.title, `%${searchTerm || ""}%`))
         .then((res) => res[0].count),
     isProtected: false,
     serverErrorMessage: "Getting posts count",

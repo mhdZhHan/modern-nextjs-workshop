@@ -1,6 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import { FilterX } from "lucide-react"
+
+// components
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -12,6 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { Separator } from "../ui/separator"
 
 const categories = ["Technology", "Travel", "Food", "Lifestyle", "Fashion"]
 const tags = ["JavaScript", "React", "Node.js", "CSS", "HTML", "Python"]
@@ -19,7 +23,7 @@ const tags = ["JavaScript", "React", "Node.js", "CSS", "HTML", "Python"]
 export default function Filters() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [dateRange, setDateRange] = useState<{
+  const [dateRange, _] = useState<{
     from: Date | undefined
     to: Date | undefined
   }>({
@@ -42,10 +46,20 @@ export default function Filters() {
   }
 
   return (
-    <div className="border p-4">
-      <div>
-        <h2 className="mb-2 text-lg font-semibold">Search</h2>
-        <Input type="text" placeholder="Search blogs..." />
+    <div className="rounded-lg border p-4 pb-0">
+      <div className="mb-4 flex items-center justify-between">
+        <span className="text-sm font-medium uppercase">Filters</span>
+
+        <Button variant={"outline"} size={"sm"}>
+          Clear <FilterX />
+        </Button>
+      </div>
+
+      <Separator />
+
+      <div className="my-4">
+        <span className="text-sm font-medium uppercase">Search</span>
+        <Input type="text" placeholder="Search" className="mt-4" />
       </div>
 
       <Accordion type="single" collapsible className="w-full">
@@ -53,6 +67,7 @@ export default function Filters() {
           <AccordionTrigger className="uppercase hover:no-underline">
             Categories
           </AccordionTrigger>
+
           <AccordionContent>
             <div className="flex flex-col gap-1 space-y-2">
               {categories.map((category) => (
@@ -62,6 +77,7 @@ export default function Filters() {
                     checked={selectedCategories.includes(category)}
                     onCheckedChange={() => handleCategoryChange(category)}
                   />
+
                   <Label htmlFor={`category-${category}`} className="ml-2">
                     {category}
                   </Label>
@@ -75,6 +91,7 @@ export default function Filters() {
           <AccordionTrigger className="uppercase hover:no-underline">
             Tags
           </AccordionTrigger>
+
           <AccordionContent>
             <div className="flex flex-col gap-1 space-y-2">
               {tags.map((tag) => (
@@ -84,6 +101,7 @@ export default function Filters() {
                     checked={selectedTags.includes(tag)}
                     onCheckedChange={() => handleTagChange(tag)}
                   />
+
                   <Label htmlFor={`tag-${tag}`} className="ml-2">
                     {tag}
                   </Label>
@@ -93,10 +111,11 @@ export default function Filters() {
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="date">
+        <AccordionItem value="date" className="border-none">
           <AccordionTrigger className="uppercase hover:no-underline">
             Date Range
           </AccordionTrigger>
+
           <AccordionContent>
             <Calendar
               mode="range"
@@ -107,8 +126,6 @@ export default function Filters() {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-
-      <Button className="w-full">Apply Filters</Button>
     </div>
   )
 }

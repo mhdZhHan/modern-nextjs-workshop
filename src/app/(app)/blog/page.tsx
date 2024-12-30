@@ -10,13 +10,19 @@ export default function page() {
   // if (Math.random() > 10) throw new Error("Random error occurred")
 
   return (
-    <div className="flex flex-col gap-4 lg:flex-row">
-      <div className="w-full pl-4 lg:w-[28%]">
+    <div className="flex flex-col gap-4 px-4 lg:flex-row lg:px-0">
+      <div className="w-full lg:w-[28%] lg:pl-4">
         <Filters />
       </div>
 
-      <ScrollArea className="h-[calc(100vh-76.8px)] w-full pr-4">
-        <Suspense fallback={<Loader className="size-8 animate-spin" />}>
+      <ScrollArea className="relative h-[calc(100vh-76.8px)] w-full lg:pr-4">
+        <Suspense
+          fallback={
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <Loader className="size-8 animate-spin" />
+            </div>
+          }
+        >
           <BlogGrid />
         </Suspense>
       </ScrollArea>

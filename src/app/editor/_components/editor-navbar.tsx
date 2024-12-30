@@ -24,7 +24,7 @@ const EditorNavBar = () => {
   }
 
   return (
-    <header className="flex flex-wrap items-center justify-between border-b bg-background px-4 py-2">
+    <header className="flex flex-wrap items-center justify-between border-b bg-background px-4 py-1">
       <Link href="/blog" className="flex items-center gap-1 text-2xl">
         <span className="bg-gradient-to-r from-green-400 via-emerald-500 to-teal-600 bg-clip-text text-transparent">
           Inkspire
@@ -66,11 +66,17 @@ const EditorNavBar = () => {
       </span>
 
       <nav className="mt-4 flex w-full items-center space-x-4 md:mt-0 md:w-auto">
-        <Button variant={"default"} onClick={handleChangeEditorState}>
+        <Button
+          variant={"default"}
+          size={"sm"}
+          onClick={handleChangeEditorState}
+        >
           Publish
         </Button>
 
-        <Button variant={"outline"}>Save Draft</Button>
+        <Button variant={"outline"} size={"sm"}>
+          Save Draft
+        </Button>
 
         <ThemeToggle />
       </nav>
