@@ -8,21 +8,33 @@ import {
 
 import { z } from "zod"
 import { slugify } from "@/utils"
+import { JSONContent } from "novel"
+
+const marksSchema = z.object({
+  type: z.string(),
+  attrs: z.record(z.any()).optional(),
+})
+
+const jsonContentSchema: z.ZodSchema<JSONContent> = z.lazy(() =>
+  z.object({
+    type: z.string().optional(),
+    attrs: z.record(z.any()).optional(),
+    content: z.array(z.lazy(() => jsonContentSchema)).optional(),
+    marks: z.array(marksSchema).optional(),
+    text: z.string().optional(),
+  })
+)
 
 export const newPostSchema = z.object({
   title: z.string().min(1, "Title is required"),
   slug: z.string().min(1, "Slug is required"),
   banner: z.string().url("Banner must be a valid URL"),
-  content: z
-    .record(z.any())
-    .refine(
-      (content) => Object.keys(content).length > 0,
-      "Content cannot be empty"
-    ),
+  content: jsonContentSchema.refine(
+    (content) => !!content?.type || !!content?.text,
+    "Content must include a valid type or text property"
+  ),
   shortDescription: z.string().min(1, "Short description is required"),
-  categoryId: z
-    .string()
-    .uuid("Category ID must be a valid UUID"),
+  categoryId: z.string().uuid("Category ID must be a valid UUID"),
   status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).default("DRAFT"),
 })
 
@@ -115,6 +127,7 @@ export const useBlogStore = create<BlogStore>()((set, get) => ({
       const result = await createNewPost({
         ...blogData,
         status: "PUBLISHED",
+        content: JSON.stringify(blogData.content),
       })
 
       if (result.success) {
