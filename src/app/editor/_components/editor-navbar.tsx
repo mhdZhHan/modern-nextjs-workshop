@@ -25,14 +25,11 @@ const EditorNavBar = () => {
 
   return (
     <header className="flex flex-wrap items-center justify-between border-b bg-background px-4 py-1">
-      <Link href="/blog" className="flex items-center gap-1 text-2xl">
-        <span className="bg-gradient-to-r from-green-400 via-emerald-500 to-teal-600 bg-clip-text text-transparent">
-          Inkspire
-        </span>
+      <Link href="/blog" className="flex items-center gap-1 text-lg">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 100 100"
-          className={`h-11 w-11 text-teal-500`}
+          className={`h-9 w-9 text-teal-500`}
           stroke="currentColor"
           fill="none"
         >
@@ -60,6 +57,9 @@ const EditorNavBar = () => {
             strokeLinecap="round"
           />
         </svg>
+        <span className="bg-gradient-to-r from-green-400 via-emerald-500 to-teal-600 bg-clip-text text-transparent">
+          Inkspire
+        </span>
       </Link>
       <span className="text-md">
         {blogData.title ? blogData.title : "New blog"}

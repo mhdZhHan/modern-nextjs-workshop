@@ -34,8 +34,8 @@ export default async function BlogPost({
   }
 
   return (
-    <ScrollArea className="relative h-[calc(100vh-76.8px)] w-full pr-4">
-      <article className="prose prose-zinc mx-auto pb-4 dark:prose-invert md:prose-base lg:prose-lg">
+    <ScrollArea className="relative h-auto w-full lg:h-[calc(100vh-76.8px)]">
+      <article className="prose prose-zinc mx-auto max-w-[90ch] border p-4 dark:prose-invert md:prose-sm lg:prose-base">
         <h1 className="text-3xl font-bold">{blogPost.title}</h1>
 
         <div className="mb-4 flex items-center gap-2">

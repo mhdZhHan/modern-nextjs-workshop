@@ -1,18 +1,20 @@
 import { getPosts, getPostsCount } from "@/queries"
-
-import { Button } from "../ui/button"
 import BlogCard from "./blog-card"
+import { Pagination } from "./pagination"
 
-export default async function BlogGrid() {
+export default async function BlogGrid({
+  currentPage,
+}: {
+  currentPage: number
+}) {
   const limit = 9
-  const page = 0
 
   const [postsCount, postsData] = await Promise.all([
     getPostsCount(),
-    getPosts(page, limit),
+    getPosts(currentPage, limit),
   ])
 
-  const pagesCount = Math.ceil((postsCount || 0) / limit)
+  const totalPages = Math.ceil((postsCount || 0) / limit)
 
   return (
     <>
@@ -22,18 +24,13 @@ export default async function BlogGrid() {
             {postsData?.map((post) => <BlogCard key={post.id} post={post} />)}
           </div>
 
-          <div className="mt-8 flex flex-wrap justify-center">
-            {Array.from(
-              {
-                length: Math.ceil(["post1", "post2", "post3"].length / limit),
-              },
-              (_, i) => (
-                <Button key={i} variant={"outline"} className="mx-1 mb-2">
-                  {i + 1}
-                </Button>
-              )
-            )}
-          </div>
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              className="mt-4"
+            />
+          )}
         </>
       ) : (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-500">

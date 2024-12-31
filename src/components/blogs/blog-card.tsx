@@ -1,3 +1,4 @@
+import Link from "next/link"
 import {
   ArrowRightIcon,
   BookmarkIcon,
@@ -5,17 +6,18 @@ import {
   ShareIcon,
 } from "lucide-react"
 
+// components
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "../ui/separator"
 import { Button } from "../ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
-import { Post } from "@/db/schema"
+import { Category, Post, PostToTag, User } from "@/db/schema"
 import { simplifyDate } from "@/utils"
 
 type BlogCardProps = {
-  post: Post
+  post: Post & { author: User; tags: PostToTag[]; category: Category }
 }
 
 const BlogCard = ({ post }: BlogCardProps) => {
@@ -41,29 +43,39 @@ const BlogCard = ({ post }: BlogCardProps) => {
         </div>
 
         <div className="flex-1">
-          <h3 className="mb-2 text-lg font-medium leading-tight tracking-wide">
+          <h3 className="mb-2 text-lg font-medium leading-snug tracking-wide">
             {post.title}
           </h3>
 
-          <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
+          <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
             {post.shortDescription}
           </p>
-
-          <div className="mb-4 flex flex-wrap gap-2">
-            <Badge variant="outline" className="text-xs font-medium">
-              React js
-            </Badge>
-          </div>
         </div>
 
-        <div>
+        <div className="mt-3">
+          {post.tags.length > 0 && (
+            <div className="mb-3 flex flex-wrap gap-2">
+              {post.tags.map((tag) => (
+                <Badge
+                  key={tag.tagId}
+                  variant="outline"
+                  className="text-xs font-medium"
+                >
+                  React js
+                </Badge>
+              ))}
+            </div>
+          )}
+
           <Separator className="mb-4" />
 
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Avatar className="h-7 w-7">
-                <AvatarImage src={"/avatar.jpg"} alt={"Mohammed"} />
-                <AvatarFallback>{"Mohammed".charAt(0)}</AvatarFallback>
+                <AvatarImage src={"/avatar.jpg"} alt={post.author.username} />
+                <AvatarFallback>
+                  {post.author.fullName.charAt(0)}
+                </AvatarFallback>
               </Avatar>
 
               <div>
@@ -84,7 +96,7 @@ const BlogCard = ({ post }: BlogCardProps) => {
                 <span className="text-[10px]">21</span>
               </Button>
               <Button variant="ghost" size="sm" className="h-6 px-1.5">
-                Read More
+                <Link href={`/blog/${post.slug}`}>Read More</Link>
                 <ArrowRightIcon className="ml-1 h-2.5 w-2.5" />
               </Button>
             </div>

@@ -24,14 +24,11 @@ export default function Header() {
   return (
     <header className="flex flex-wrap items-center justify-between border-b bg-background px-4 py-1">
       <div className="flex items-center gap-3">
-        <Link href="/blog" className="flex items-center gap-1 text-2xl">
-          <span className="bg-gradient-to-r from-green-400 via-emerald-500 to-teal-600 bg-clip-text text-transparent">
-            Inkspire
-          </span>
+        <Link href="/blog" className="flex items-center gap-1 text-lg">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 100 100"
-            className={`h-11 w-11 text-teal-500`}
+            className={`h-9 w-9 text-teal-500`}
             stroke="currentColor"
             fill="none"
           >
@@ -59,6 +56,9 @@ export default function Header() {
               strokeLinecap="round"
             />
           </svg>
+          <span className="bg-gradient-to-r from-green-400 via-emerald-500 to-teal-600 bg-clip-text text-transparent">
+            Inkspire
+          </span>
         </Link>
 
         <nav className="mt-4 flex w-full items-center space-x-4 md:mt-0 md:w-auto">
@@ -66,7 +66,7 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className={`hover:text-foreground/80 ${
+              className={`text-sm hover:text-foreground/80 ${
                 pathname === link.href
                   ? "text-foreground"
                   : "text-foreground/60"
