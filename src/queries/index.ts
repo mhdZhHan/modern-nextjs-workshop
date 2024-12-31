@@ -45,13 +45,27 @@ export async function getPosts(
 ) {
   return executeQuery({
     queryFn: async () =>
-      await db
-        .select()
-        .from(postsTable)
-        .orderBy(desc(postsTable.createdAt))
-        .limit(limit)
-        .offset(page * limit)
-        .where(ilike(postsTable.title, `%${searchTerm || ""}%`)),
+      // await db
+      //   .select()
+      //   .from(postsTable)
+      //   .orderBy(desc(postsTable.createdAt))
+      //   .limit(limit)
+      //   .offset(page * limit)
+      //   .where(ilike(postsTable.title, `%${searchTerm || ""}%`)),
+
+      await db.query.postsTable.findMany({
+        orderBy: [desc(postsTable.createdAt)],
+        limit: limit,
+        offset: page * limit,
+        with: {
+          author: true,
+          category: true,
+          tags: {
+            with: { tag: true },
+          },
+        },
+        where: ilike(postsTable.title, `%${searchTerm || ""}%`),
+      }),
     isProtected: false,
     serverErrorMessage: "Getting posts",
   })
