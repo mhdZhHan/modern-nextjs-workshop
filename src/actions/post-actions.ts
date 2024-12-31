@@ -29,6 +29,7 @@ export async function createNewPost(data: Omit<NewPost, "authorId">) {
 
       console.log(postId)
 
+      revalidatePath(`/blog`)
       revalidatePath(`/dashboard`)
     },
     isProtected: true,
@@ -46,7 +47,7 @@ export async function updatePost(data: Omit<NewPost, "authorId">) {
 
       await db
         .update(postsTable)
-        .set({...validatedData, authorId: userId!})
+        .set({ ...validatedData, authorId: userId! })
         .where(eq(postsTable.id, validatedData.id!))
 
       // delete tags
@@ -54,6 +55,7 @@ export async function updatePost(data: Omit<NewPost, "authorId">) {
         .delete(postToTagsTable)
         .where(eq(postToTagsTable.postId, validatedData.id!))
 
+      revalidatePath(`/blog`)
       revalidatePath(`/dashboard`)
     },
     isProtected: true,
@@ -67,6 +69,8 @@ export async function deletePostById(id: string) {
     queryFn: async () => {
       await db.delete(postToTagsTable).where(eq(postToTagsTable.postId, id))
       await db.delete(postsTable).where(eq(postsTable.id, id))
+
+      revalidatePath(`/blog`)
       revalidatePath(`/dashboard`)
     },
     isProtected: true,
