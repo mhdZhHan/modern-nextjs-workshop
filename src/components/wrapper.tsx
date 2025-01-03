@@ -36,3 +36,7 @@ export const Wrapper = ({ children }: WrapperProps) => {
     </div>
   )
 }
+
+// example of trigger
+// await wait(2000)
+// if (Math.random() > 10) throw new Error("Random error occurred")

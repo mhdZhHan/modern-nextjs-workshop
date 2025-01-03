@@ -40,7 +40,7 @@ const CommentsSheet = ({ slug }: CommentsSheetProps) => {
           </TooltipContent>
         </Tooltip>
 
-        <SheetContent side="right" className="w-1/2">
+        <SheetContent side="right" className="w-1/2 lg:min-w-[500px]">
           <SheetHeader>
             <SheetTitle>Comments</SheetTitle>
           </SheetHeader>

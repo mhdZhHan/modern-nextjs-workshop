@@ -35,6 +35,7 @@ export const newPostSchema = z.object({
   ),
   shortDescription: z.string().min(1, "Short description is required"),
   categoryId: z.string().uuid("Category ID must be a valid UUID"),
+  tags: z.array(z.string()),
   status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).default("DRAFT"),
 })
 
@@ -54,7 +55,7 @@ type BlogStore = {
   resetBlogData: () => void
 
   // Form Submission
-  publishPost: () => Promise<void>
+  publishPost: () => Promise<boolean>
   saveDraft: () => Promise<void>
   deleteBlog: (id: string) => Promise<void>
 }
@@ -71,6 +72,7 @@ export const useBlogStore = create<BlogStore>()((set, get) => ({
         shortDescription: "",
         banner: "",
         content: {},
+        tags: [],
         categoryId: "15301e77-42ed-4a32-904c-039739f71819",
         status: "DRAFT",
       },
@@ -109,16 +111,14 @@ export const useBlogStore = create<BlogStore>()((set, get) => ({
   // Form Submission
   publishPost: async () => {
     const { blogData } = get()
-
     const validatedData = newPostSchema.safeParse(blogData)
 
     if (!validatedData.success) {
       const errorMessage = validatedData.error.issues.map(
         (issue) => issue.message
       )
-
       toast.error(errorMessage)
-      return
+      return false
     }
 
     set({ isSubmitting: true })
@@ -132,13 +132,16 @@ export const useBlogStore = create<BlogStore>()((set, get) => ({
 
       if (result.success) {
         toast.success("Blog post published successfully")
-      } else {
-        toast.error(result.message)
+        set({ isDirty: false })
+        return true
       }
-      set({ isDirty: false })
+
+      toast.error(result.message)
+      return false
     } catch (error) {
       console.error("Error publishing post:", error)
       toast.error("Failed to publish post")
+      return false
     } finally {
       set({ isSubmitting: false })
     }

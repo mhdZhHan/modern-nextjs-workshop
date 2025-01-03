@@ -13,11 +13,16 @@ import { Separator } from "../ui/separator"
 import { Button } from "../ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
-import { Category, Post, PostToTag, User } from "@/db/schema"
+import { Post, PostToTag, Tag, User } from "@/db/schema"
 import { simplifyDate } from "@/utils"
 
 type BlogCardProps = {
-  post: Post & { author: User; tags: PostToTag[]; category: Category }
+  post: Post & {
+    author: User
+    tags: (PostToTag & {
+      tag: Tag
+    })[]
+  }
 }
 
 const BlogCard = ({ post }: BlogCardProps) => {
@@ -55,13 +60,13 @@ const BlogCard = ({ post }: BlogCardProps) => {
         <div className="mt-3">
           {post.tags.length > 0 && (
             <div className="mb-3 flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
+              {post.tags.map((postTag) => (
                 <Badge
-                  key={tag.tagId}
+                  key={postTag.tagId}
                   variant="outline"
                   className="text-xs font-medium"
                 >
-                  React js
+                  {postTag.tag.name}
                 </Badge>
               ))}
             </div>

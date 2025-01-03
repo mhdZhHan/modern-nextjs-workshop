@@ -19,25 +19,6 @@ export async function getTags() {
   })
 }
 
-export async function getRelatedPostsByCategoryId(categoryId: string) {
-  return executeQuery({
-    queryFn: async () =>
-      await db.query.postsTable.findMany({
-        limit: 4,
-        where: eq(postsTable.categoryId, categoryId),
-        columns: {
-          id: true,
-          title: true,
-          slug: true,
-          updatedAt: true,
-          shortDescription: true,
-        },
-      }),
-    isProtected: false,
-    serverErrorMessage: "Get related posts",
-  })
-}
-
 export async function getPosts(
   page: number,
   limit: number,
@@ -45,24 +26,13 @@ export async function getPosts(
 ) {
   return executeQuery({
     queryFn: async () =>
-      // await db
-      //   .select()
-      //   .from(postsTable)
-      //   .orderBy(desc(postsTable.createdAt))
-      //   .limit(limit)
-      //   .offset(page * limit)
-      //   .where(ilike(postsTable.title, `%${searchTerm || ""}%`)),
-
       await db.query.postsTable.findMany({
         orderBy: [desc(postsTable.createdAt)],
         limit: limit,
         offset: page * limit,
         with: {
           author: true,
-          category: true,
-          tags: {
-            with: { tag: true },
-          },
+          tags: { with: { tag: true } },
         },
         where: ilike(postsTable.title, `%${searchTerm || ""}%`),
       }),
@@ -143,9 +113,7 @@ export async function getPostBySlug(slug: string) {
       await db.query.postsTable.findFirst({
         where: eq(postsTable.slug, slug),
         with: {
-          category: true,
-          tags: true,
-          comments: true,
+          tags: { with: { tag: true } },
           author: {
             columns: {
               id: true,

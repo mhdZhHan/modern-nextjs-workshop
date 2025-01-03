@@ -1,15 +1,21 @@
-import Image from "next/image"
+"use client"
+
+import { useRouter } from "next/navigation"
 import { Loader, X } from "lucide-react"
+import { toast } from "sonner"
 
 // components
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Badge } from "@/components/ui/badge"
 
 import { useBlogStore } from "@/store/useBlogStore"
 import { SHORT_DESCRIPTION_CHAR_LIMIT, TAGS_LIMIT } from "@/lib/constants"
 
 const PublishForm = () => {
+  const router = useRouter()
+
   const {
     blogData,
     setEditorState,
@@ -22,11 +28,11 @@ const PublishForm = () => {
     setEditorState("editor")
   }
 
-  const handleBlogTitle = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const updatePostTitle = (evt: React.ChangeEvent<HTMLInputElement>) => {
     updateBlogData({ title: evt.target.value })
   }
 
-  const handleBlogDescription = (
+  const updatePostShortDescription = (
     evt: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     updateBlogData({ shortDescription: evt.target.value })
@@ -38,26 +44,59 @@ const PublishForm = () => {
     }
   }
 
+  const handleTagsInputKeyDown = (
+    evt: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (evt.key === "Enter" || evt.key === ",") {
+      evt.preventDefault()
+
+      const tag = evt.currentTarget.value.trim().toLowerCase()
+
+      if (tag.length === 0) return
+
+      if (blogData.tags.length < TAGS_LIMIT) {
+        if (!blogData.tags.includes(tag)) {
+          updateBlogData({
+            tags: [...blogData.tags, tag],
+          })
+        }
+      } else {
+        toast.error(`You can add max ${TAGS_LIMIT} tags`)
+      }
+
+      evt.currentTarget.value = ""
+    }
+  }
+
+  const handlePublish = async () => {
+    const success = await publishPost()
+    
+    if (success) {
+      setTimeout(() => {
+        router.push("/dashboard/posts")
+      }, 500)
+    }
+  }
+
   return (
-    <section className="mx-auto grid min-h-screen w-full max-w-[80%] items-center py-16 lg:grid-cols-2 lg:gap-4">
+    <div className="m-auto grid w-full max-w-[80%] lg:grid-cols-2 lg:gap-4">
       <Button
-        className="absolute right-[5vw] top-[5%] z-10 lg:top-[10%]"
+        className="absolute right-[8vw] top-[3%] z-10 lg:top-[10%]"
         onClick={handleClose}
         variant="ghost"
       >
         <X size={25} />
       </Button>
 
-      <div className="max-w-[550px]">
+      <div className="h-full max-w-[550px]">
         <p className="text-dark-grey mb-4">Preview</p>
 
         <div className="bg-grey aspect-video w-full overflow-hidden rounded-lg">
-          <Image
-            src={blogData.banner}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={blogData.banner || "/placeholder.jpg"}
             alt="banner"
-            className="h-full w-full"
-            width={100}
-            height={100}
+            className="h-full w-full object-cover"
           />
         </div>
 
@@ -70,13 +109,13 @@ const PublishForm = () => {
         </p>
       </div>
 
-      <div className="border-grey lg:border-1 lg:pl-8">
+      <div className="border-grey lg:border-1 h-full lg:pl-8">
         <p className="text-dark-grey mb-2">Blog Title</p>
         <Input
           type="text"
           placeholder="Blog Title"
           value={blogData.title}
-          onChange={handleBlogTitle}
+          onChange={updatePostTitle}
         />
 
         <p className="text-dark-grey mb-2 mt-6">
@@ -85,7 +124,7 @@ const PublishForm = () => {
         <Textarea
           maxLength={SHORT_DESCRIPTION_CHAR_LIMIT}
           value={blogData.shortDescription!}
-          onChange={handleBlogDescription}
+          onChange={updatePostShortDescription}
           onKeyDown={handleShortDescKeyDown}
         />
         <p className="text-dark-grey mt-4 text-right text-sm">
@@ -98,22 +137,44 @@ const PublishForm = () => {
           Topics - (Helps in searching and ranking your blog post)
         </p>
         <div className="relative">
-          <Input type="text" placeholder="Topic" />
+          <Input
+            type="text"
+            placeholder="Topic"
+            onKeyDown={handleTagsInputKeyDown}
+          />
+
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            {blogData.tags.map((tag, index) => (
+              <Badge
+                key={`${tag}-${index}`}
+                variant={"secondary"}
+                className="rounded-lg py-1 text-xs font-semibold"
+              >
+                {tag}
+                <button
+                  className="ml-1 rounded-full p-0.5 transition-colors hover:bg-gray-700"
+                  onClick={() => {}}
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            ))}
+          </div>
         </div>
         <p className="text-dark-grey mt-4 text-right text-sm">
-          {TAGS_LIMIT} Tags left
+          {TAGS_LIMIT - blogData.tags.length} Tags left
         </p>
 
         <Button
           variant="default"
           className="btn-dark px-8"
-          onClick={publishPost}
+          onClick={handlePublish}
           disabled={isSubmitting || blogData.status === "PUBLISHED"}
         >
           {isSubmitting && <Loader className="size-4 animate-spin" />} Publish
         </Button>
       </div>
-    </section>
+    </div>
   )
 }
 

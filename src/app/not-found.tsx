@@ -1,13 +1,9 @@
-import Link from "next/link"
+import NotFoundCard from "@/components/common/not-found-card"
 
 export default function NotFound() {
   return (
-    <div>
-      <h2>Not Found</h2>
-      <p>Could not find requested resource</p>
-      <Link href="/" className="text-blue-500">
-        Return Home
-      </Link>
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <NotFoundCard />
     </div>
   )
 }

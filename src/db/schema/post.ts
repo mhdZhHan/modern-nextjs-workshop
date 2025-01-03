@@ -3,8 +3,9 @@ import { pgTable } from "drizzle-orm/pg-core"
 import * as c from "drizzle-orm/pg-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 
-import { categoriesTable, postToTagsTable, usersTable } from "."
+import { postToTagsTable, usersTable } from "."
 import { commentsTable } from "./comment"
+import { z } from "zod"
 
 export const statusEnum = c.pgEnum("status", ["DRAFT", "ARCHIVED", "PUBLISHED"])
 
@@ -19,10 +20,6 @@ export const postsTable = pgTable("posts", {
     .text()
     .notNull()
     .references(() => usersTable.clerkId),
-  categoryId: c
-    .uuid()
-    .notNull()
-    .references(() => categoriesTable.id),
   status: statusEnum("status").default("DRAFT").notNull(),
 
   createdAt: c.timestamp().defaultNow().notNull(),
@@ -40,31 +37,25 @@ export const postsTableRelations = relations(postsTable, ({ one, many }) => ({
     references: [usersTable.clerkId],
   }),
 
-  category: one(categoriesTable, {
-    fields: [postsTable.categoryId],
-    references: [categoriesTable.id],
-  }),
-
   tags: many(postToTagsTable),
   comments: many(commentsTable),
 }))
 
 // ZOD SCHEMAS
-export const postSchema = createSelectSchema(postsTable)
-export const newPostSchema = createInsertSchema(postsTable)
+export const basePostSchema = createSelectSchema(postsTable)
+export const baseNewPostSchema = createInsertSchema(postsTable)
 
-// export const postSchema = basePostSchema.extend({
-//   tagIds: z.array(z.string().uuid()),
-// })
+export const postSchema = basePostSchema.extend({
+  tags: z.array(z.string()),
+})
 
-// export const newPostSchema = baseNewPostSchema.extend({
-//   tagIds: z.array(z.string().uuid()),
-// })
+export const newPostSchema = baseNewPostSchema.extend({
+  tags: z.array(z.string()),
+})
 
 // TYPES
-
 // export type Post = z.infer<typeof postSchema>
-// export type NewPost = z.infer<typeof newPostSchema>
+export type NewPost = z.infer<typeof newPostSchema>
 
 export type Post = typeof postsTable.$inferSelect
-export type NewPost = typeof postsTable.$inferInsert
+// export type NewPost = typeof postsTable.$inferInsert

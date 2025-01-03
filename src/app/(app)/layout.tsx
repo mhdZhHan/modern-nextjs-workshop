@@ -1,7 +1,8 @@
-import Header from "@/components/common/header"
-// import Footer from "@/components/common/footer"
+import { NuqsAdapter } from "nuqs/adapters/next/app"
 
-export default async function ProtectedLayout({
+import Header from "@/components/common/header"
+
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode
@@ -10,9 +11,7 @@ export default async function ProtectedLayout({
     <>
       <Header />
 
-      <main>{children}</main>
-
-      {/* <Footer /> */}
+      <NuqsAdapter>{children}</NuqsAdapter>
     </>
   )
 }
