@@ -8,7 +8,7 @@ import { usersTable, postsTable } from "."
 export const bookmarksTable = pgTable("bookmarks", {
   id: c.uuid().primaryKey().defaultRandom(),
   userId: c
-    .uuid()
+    .text()
     .notNull()
     .references(() => usersTable.clerkId, { onDelete: "cascade" }),
   postId: c
