@@ -3,11 +3,7 @@ import { revalidatePath } from "next/cache"
 
 import { executeAction } from "@/db/utils"
 import { db } from "@/db"
-import {
-  NewComment,
-  commentsTable,
-  newCommentSchema,
-} from "@/db/schema/comment"
+import { NewComment, commentsTable, newCommentSchema } from "@/db/schema"
 
 export async function createNewComment(data: NewComment, slug?: string) {
   return executeAction({

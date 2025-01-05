@@ -8,13 +8,7 @@ import { postsTable } from "."
 export const categoriesTable = pgTable("categories", {
   id: c.uuid().primaryKey().defaultRandom(),
   name: c.varchar({ length: 200 }).notNull().unique(),
-
   createdAt: c.timestamp().notNull().defaultNow(),
-  updatedAt: c
-    .timestamp()
-    .notNull()
-    .defaultNow()
-    .$onUpdateFn(() => new Date()),
 })
 
 // RELATIONS

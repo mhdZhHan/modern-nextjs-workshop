@@ -3,8 +3,7 @@ import { pgTable } from "drizzle-orm/pg-core"
 import * as c from "drizzle-orm/pg-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 
-import { postsTable } from "."
-import { commentsTable } from "./comment"
+import { bookmarksTable, postsTable, commentsTable } from "."
 
 // TABLE SCHEMAS
 export const usersTable = pgTable("users", {
@@ -27,6 +26,7 @@ export const usersTable = pgTable("users", {
 export const usersTableRelations = relations(usersTable, ({ many }) => ({
   posts: many(postsTable),
   comments: many(commentsTable),
+  users: many(bookmarksTable),
 }))
 
 // ZOD SCHEMAS

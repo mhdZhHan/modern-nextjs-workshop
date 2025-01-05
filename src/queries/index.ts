@@ -1,7 +1,7 @@
 import { db } from "@/db"
-import { postsTable, usersTable } from "@/db/schema"
+import { bookmarksTable, postsTable, usersTable } from "@/db/schema"
 import { executeQuery } from "@/db/utils"
-import { count, desc, eq, ilike } from "drizzle-orm"
+import { and, count, desc, eq, ilike } from "drizzle-orm"
 
 export async function getCategories() {
   return executeQuery({
@@ -62,7 +62,7 @@ export async function getUserPostsCount(userId: string) {
         .from(postsTable)
         .where(eq(postsTable.authorId, userId))
         .then((res) => res[0].count),
-    isProtected: false,
+    isProtected: true,
     serverErrorMessage: "Getting user posts count",
   })
 }
@@ -88,7 +88,7 @@ export async function getUserPosts({
           tags: { with: { tag: true } },
         },
       }),
-    isProtected: false,
+    isProtected: true,
     serverErrorMessage: "Getting user posts",
   })
 }
@@ -106,7 +106,7 @@ export async function getUser(clerkId: string) {
         },
         where: eq(usersTable.clerkId, clerkId),
       }),
-    isProtected: false,
+    isProtected: true,
     serverErrorMessage: "Getting user",
   })
 }
@@ -129,6 +129,40 @@ export async function getPostBySlug(slug: string) {
         },
       }),
     isProtected: false,
-    serverErrorMessage: "Comment creating",
+    serverErrorMessage: "Getting blog by slug",
+  })
+}
+
+export async function getUserBookmarks(userId: string) {
+  return executeQuery({
+    queryFn: async () =>
+      await db.query.bookmarksTable.findMany({
+        where: eq(bookmarksTable.userId, userId),
+        with: {
+          post: true,
+        },
+      }),
+    isProtected: true,
+    serverErrorMessage: "Getting user bookmarks",
+  })
+}
+
+export async function isBookmarked({
+  userId,
+  postId,
+}: {
+  userId: string
+  postId: string
+}) {
+  return executeQuery({
+    queryFn: async () =>
+      await db.query.bookmarksTable.findFirst({
+        where: and(
+          eq(bookmarksTable.userId, userId),
+          eq(bookmarksTable.postId, postId)
+        ),
+      }),
+    isProtected: true,
+    serverErrorMessage: "Checking post is bookmarked by the current user",
   })
 }

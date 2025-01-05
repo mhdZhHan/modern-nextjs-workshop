@@ -9,13 +9,7 @@ import { postsTable } from "."
 export const tagsTable = pgTable("tags", {
   id: c.uuid().primaryKey().defaultRandom(),
   name: c.varchar({ length: 50 }).notNull().unique(),
-
   createdAt: c.timestamp().notNull().defaultNow(),
-  updatedAt: c
-    .timestamp()
-    .notNull()
-    .defaultNow()
-    .$onUpdateFn(() => new Date()),
 })
 
 export const postToTagsTable = pgTable(

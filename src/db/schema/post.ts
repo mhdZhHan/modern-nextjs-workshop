@@ -2,10 +2,9 @@ import { relations } from "drizzle-orm"
 import { pgTable } from "drizzle-orm/pg-core"
 import * as c from "drizzle-orm/pg-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
-
-import { postToTagsTable, usersTable } from "."
-import { commentsTable } from "./comment"
 import { z } from "zod"
+
+import { bookmarksTable, postToTagsTable, usersTable, commentsTable } from "."
 
 export const statusEnum = c.pgEnum("status", ["DRAFT", "ARCHIVED", "PUBLISHED"])
 
@@ -22,6 +21,7 @@ export const postsTable = pgTable("posts", {
     .references(() => usersTable.clerkId),
   status: statusEnum("status").default("DRAFT").notNull(),
 
+  isDeleted: c.boolean().default(false),
   createdAt: c.timestamp().defaultNow().notNull(),
   updatedAt: c
     .timestamp()
@@ -39,6 +39,7 @@ export const postsTableRelations = relations(postsTable, ({ one, many }) => ({
 
   tags: many(postToTagsTable),
   comments: many(commentsTable),
+  bookmarks: many(bookmarksTable),
 }))
 
 // ZOD SCHEMAS
