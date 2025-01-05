@@ -54,8 +54,9 @@ export const newPostSchema = baseNewPostSchema.extend({
 })
 
 // TYPES
-// export type Post = z.infer<typeof postSchema>
+export type PostStatus = "DRAFT" | "ARCHIVED" | "PUBLISHED"
 export type NewPost = z.infer<typeof newPostSchema>
-
 export type Post = typeof postsTable.$inferSelect
+
+// export type Post = z.infer<typeof postSchema>
 // export type NewPost = typeof postsTable.$inferInsert

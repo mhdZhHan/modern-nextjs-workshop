@@ -83,6 +83,10 @@ export async function getUserPosts({
         limit,
         offset: limit * page,
         orderBy: [desc(postsTable.createdAt)],
+        with: {
+          author: true,
+          tags: { with: { tag: true } },
+        },
       }),
     isProtected: false,
     serverErrorMessage: "Getting user posts",
