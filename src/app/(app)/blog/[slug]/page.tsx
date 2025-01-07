@@ -1,6 +1,7 @@
+import { Suspense } from "react"
 import { notFound } from "next/navigation"
 import { JSONContent } from "novel"
-import { Calendar, User2 } from "lucide-react"
+import { Calendar, Loader, User2 } from "lucide-react"
 
 // components
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -34,36 +35,45 @@ export default async function page({
 
   return (
     <ScrollArea className="relative h-auto w-full lg:h-[calc(100vh-60.8px)]">
-      <article className="prose prose-zinc mx-auto max-w-[90ch] py-4 dark:prose-invert md:prose-sm lg:prose-base">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={banner || "/placeholder.jpg"}
-          alt="blog-thumbnail"
-          className="h-72 w-full object-cover"
-        />
+      <Suspense
+        key={slug}
+        fallback={
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <Loader className="size-8 animate-spin" />
+          </div>
+        }
+      >
+        <article className="prose prose-zinc mx-auto max-w-[90ch] py-4 dark:prose-invert md:prose-sm lg:prose-base">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={banner || "/placeholder.jpg"}
+            alt="blog-thumbnail"
+            className="h-72 w-full object-cover"
+          />
 
-        <h1 className="text-3xl font-bold leading-relaxed tracking-wide">
-          {title}
-        </h1>
+          <h1 className="text-3xl font-bold leading-relaxed tracking-wide">
+            {title}
+          </h1>
 
-        <div className="mb-4 flex items-center gap-2">
-          <Calendar className="size-4" />
-          <span>{simplifyDate(createdAt).simplifiedDate}</span>
+          <div className="mb-4 flex items-center gap-2">
+            <Calendar className="size-4" />
+            <span>{simplifyDate(createdAt).simplifiedDate}</span>
 
-          <User2 className="size-4" />
-          <span>By {authorName || authorUsername}</span>
+            <User2 className="size-4" />
+            <span>By {authorName || authorUsername}</span>
 
-          <CommentsSheet slug={slug} />
-        </div>
+            <CommentsSheet slug={slug} />
+          </div>
 
-        <Separator />
+          <Separator />
 
-        <div>
-          <BlogRenderer content={content as JSONContent} />
-        </div>
+          <div>
+            <BlogRenderer content={content as JSONContent} />
+          </div>
 
-        <Separator />
-      </article>
+          <Separator />
+        </article>
+      </Suspense>
     </ScrollArea>
   )
 }
