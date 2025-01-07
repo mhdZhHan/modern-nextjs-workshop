@@ -4,7 +4,6 @@
   "semi": false,
   "singleQuote": false,
   "tailwindConfig": "./tailwind.config.ts",
-  "plugins": [
-      "prettier-plugin-tailwindcss"
-  ]
+  "proseWrap": "always",
+  "plugins": ["prettier-plugin-tailwindcss"]
 }
