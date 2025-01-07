@@ -1,3 +1,5 @@
+import "server-only"
+
 import { getErrorMessage } from "@/lib/utils"
 import { auth } from "@clerk/nextjs/server"
 import { isRedirectError } from "next/dist/client/components/redirect-error"

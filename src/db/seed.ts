@@ -1,3 +1,5 @@
+import "server-only"
+
 import { Table, sql } from "drizzle-orm"
 
 import { DB, db } from "."
