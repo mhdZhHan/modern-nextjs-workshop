@@ -1,8 +1,7 @@
 import { Suspense } from "react"
 import { auth } from "@clerk/nextjs/server"
 import { Loader } from "lucide-react"
-
-import { getUserPosts } from "@/queries"
+import { gteUserTrashedPosts } from "@/queries"
 
 // components
 import { DashboardBlogCard } from "@/components/dashboard/card/blog-card"
@@ -12,12 +11,7 @@ export default async function page() {
 
   if (!userId) return
 
-  const posts = await getUserPosts({
-    page: 0,
-    limit: 10,
-    userId: userId,
-    status: ["ARCHIVED"],
-  })
+  const posts = await gteUserTrashedPosts(userId)
 
   return (
     <Suspense
@@ -32,7 +26,7 @@ export default async function page() {
           posts?.map((post) => <DashboardBlogCard post={post} key={post.id} />)
         ) : (
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-500">
-            No archived posts yet. Move posts here to keep things organized!
+            No trashed posts found. Clean slate!
           </div>
         )}
       </div>

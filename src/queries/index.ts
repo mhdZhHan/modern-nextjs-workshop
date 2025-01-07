@@ -1,7 +1,7 @@
 import { db } from "@/db"
-import { bookmarksTable, postsTable, usersTable } from "@/db/schema"
+import { PostStatus, bookmarksTable, postsTable, usersTable } from "@/db/schema"
 import { executeQuery } from "@/db/utils"
-import { and, count, desc, eq, ilike } from "drizzle-orm"
+import { and, count, desc, eq, ilike, inArray } from "drizzle-orm"
 
 export async function getCategories() {
   return executeQuery({
@@ -22,6 +22,7 @@ export async function getTags() {
 export async function getPosts(
   page: number,
   limit: number,
+  status: PostStatus = "PUBLISHED",
   searchTerm?: string
 ) {
   return executeQuery({
@@ -34,7 +35,11 @@ export async function getPosts(
           author: true,
           tags: { with: { tag: true } },
         },
-        where: ilike(postsTable.title, `%${searchTerm || ""}%`),
+        where: and(
+          eq(postsTable.status, status),
+          ilike(postsTable.title, `%${searchTerm || ""}%`),
+          eq(postsTable.isDeleted, false)
+        ),
       }),
     isProtected: false,
     serverErrorMessage: "Getting posts",
@@ -47,7 +52,12 @@ export async function getPostsCount(searchTerm?: string) {
       await db
         .select({ count: count() })
         .from(postsTable)
-        .where(ilike(postsTable.title, `%${searchTerm || ""}%`))
+        .where(
+          and(
+            ilike(postsTable.title, `%${searchTerm || ""}%`),
+            eq(postsTable.isDeleted, false)
+          )
+        )
         .then((res) => res[0].count),
     isProtected: false,
     serverErrorMessage: "Getting posts count",
@@ -71,15 +81,23 @@ export async function getUserPosts({
   page,
   limit,
   userId,
+  status,
 }: {
   page: number
   limit: number
   userId: string
+  status?: PostStatus[]
 }) {
   return executeQuery({
     queryFn: async () =>
       await db.query.postsTable.findMany({
-        where: eq(postsTable.authorId, userId),
+        where: and(
+          eq(postsTable.authorId, userId),
+          status
+            ? inArray(postsTable.status, status)
+            : inArray(postsTable.status, ["PUBLISHED", "DRAFT"]),
+          eq(postsTable.isDeleted, false)
+        ),
         limit,
         offset: limit * page,
         orderBy: [desc(postsTable.createdAt)],
@@ -115,7 +133,7 @@ export async function getPostBySlug(slug: string) {
   return executeQuery({
     queryFn: async () =>
       await db.query.postsTable.findFirst({
-        where: eq(postsTable.slug, slug),
+        where: and(eq(postsTable.slug, slug), eq(postsTable.isDeleted, false)),
         with: {
           tags: { with: { tag: true } },
           author: {
@@ -137,7 +155,10 @@ export async function getUserBookmarks(userId: string) {
   return executeQuery({
     queryFn: async () =>
       await db.query.bookmarksTable.findMany({
-        where: eq(bookmarksTable.userId, userId),
+        where: and(
+          eq(bookmarksTable.userId, userId),
+          eq(postsTable.isDeleted, false)
+        ),
         with: {
           post: true,
         },
@@ -164,5 +185,24 @@ export async function isBookmarked({
       }),
     isProtected: true,
     serverErrorMessage: "Checking post is bookmarked by the current user",
+  })
+}
+
+export async function gteUserTrashedPosts(userId: string) {
+  return executeQuery({
+    queryFn: async () =>
+      await db.query.postsTable.findMany({
+        orderBy: [desc(postsTable.createdAt)],
+        with: {
+          author: true,
+          tags: { with: { tag: true } },
+        },
+        where: and(
+          eq(postsTable.authorId, userId),
+          eq(postsTable.isDeleted, true)
+        ),
+      }),
+    isProtected: true,
+    serverErrorMessage: "Getting trashed posts",
   })
 }

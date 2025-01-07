@@ -28,7 +28,7 @@ export function DashboardBlogCard({ post }: BlogCardProps) {
           {post.title}
         </h3>
 
-        <CardActionMenu slug={post.slug} />
+        <CardActionMenu postId={post.id} />
       </CardHeader>
 
       <CardContent className="p-0 py-3">
@@ -61,7 +61,7 @@ export function DashboardBlogCard({ post }: BlogCardProps) {
       <Separator />
 
       <CardFooter className="flex items-center justify-between p-0 pt-3">
-        <PostStatusToggle currentStatus={post.status} />
+        <PostStatusToggle postId={post.id} currentStatus={post.status} />
 
         <Button variant="outline" size="sm">
           <Link href={`/blog/${post.slug}`} className="flex gap-2">

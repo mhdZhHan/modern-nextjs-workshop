@@ -8,6 +8,7 @@ import { executeAction } from "@/db/utils"
 import { db } from "@/db"
 import {
   NewPost,
+  PostStatus,
   newPostSchema,
   postToTagsTable,
   postsTable,
@@ -84,7 +85,25 @@ export async function updatePost(data: Omit<NewPost, "authorId">) {
   })
 }
 
-export async function deletePostById(id: string) {
+export async function trashPostById(_: unknown, postId: string) {
+  return executeAction({
+    queryFn: async () => {
+      if (!postId) throw new Error("Post id is required")
+
+      await db
+        .update(postsTable)
+        .set({ isDeleted: true })
+        .where(eq(postsTable.id, postId))
+
+      revalidatePath(`/dashboard`)
+    },
+    isProtected: true,
+    clientSuccessMessage: "post trashed successfully",
+    serverErrorMessage: "post trashing",
+  })
+}
+
+export async function deletePostById(_: unknown, id: string) {
   return executeAction({
     queryFn: async () => {
       await db.delete(postToTagsTable).where(eq(postToTagsTable.postId, id))
@@ -95,5 +114,26 @@ export async function deletePostById(id: string) {
     isProtected: true,
     clientSuccessMessage: "post deleted successfully",
     serverErrorMessage: "post deleting",
+  })
+}
+
+export async function changePostStatus(
+  _: unknown,
+  { postId, status }: { postId: string; status: PostStatus }
+) {
+  return executeAction({
+    queryFn: async () => {
+      if (!postId) throw new Error("Post id is required")
+
+      await db
+        .update(postsTable)
+        .set({ status })
+        .where(eq(postsTable.id, postId))
+
+      revalidatePath(`/dashboard`)
+    },
+    isProtected: true,
+    clientSuccessMessage: `Post ${status} successfully`,
+    serverErrorMessage: "post trashing",
   })
 }

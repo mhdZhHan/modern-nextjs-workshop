@@ -1,19 +1,26 @@
 "use client"
 
-import { useState } from "react"
+import { startTransition, useActionState, useState } from "react"
 import { Switch } from "@/components/ui/switch"
 
 import { PostStatus } from "@/db/schema"
+import { changePostStatus } from "@/actions/post-actions"
 
 type PostStatusToggleProps = {
   currentStatus: PostStatus
+  postId: string
 }
 
-const PostStatusToggle = ({ currentStatus }: PostStatusToggleProps) => {
+const PostStatusToggle = ({ currentStatus, postId }: PostStatusToggleProps) => {
   const [isPublished, setIsPublished] = useState(currentStatus === "PUBLISHED")
+  const [_, action, isPending] = useActionState(changePostStatus, undefined)
 
   const handleStatusToggle = () => {
     setIsPublished(!isPublished)
+    const newStatus: PostStatus = !isPublished ? "PUBLISHED" : "DRAFT"
+    startTransition(() => {
+      action({ postId, status: newStatus })
+    })
   }
 
   return (
@@ -21,6 +28,7 @@ const PostStatusToggle = ({ currentStatus }: PostStatusToggleProps) => {
       <Switch
         checked={isPublished}
         onCheckedChange={handleStatusToggle}
+        disabled={isPending}
         aria-label="Toggle publish status"
       />
 

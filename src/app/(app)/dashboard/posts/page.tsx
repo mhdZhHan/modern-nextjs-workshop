@@ -25,9 +25,15 @@ export default async function page() {
       }
     >
       <div className="flex flex-col gap-4">
-        {postsData?.map((post) => (
-          <DashboardBlogCard post={post} key={post.id} />
-        ))}
+        {postsData && postsData.length > 0 ? (
+          postsData?.map((post) => (
+            <DashboardBlogCard post={post} key={post.id} />
+          ))
+        ) : (
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-500">
+            No blogs found. Start writing your first post!
+          </div>
+        )}
       </div>
     </Suspense>
   )
