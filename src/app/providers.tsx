@@ -1,6 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs"
 import { ThemeProvider } from "@/providers/theme-provider"
-import { ClientProvider } from "@/providers/client-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 // import { Wrapper } from "@/components/wrapper"
@@ -18,14 +17,12 @@ export default function Providers({
         enableSystem
         disableTransitionOnChange
       >
-        <ClientProvider>
-          {/* <Wrapper>{children}</Wrapper> */}
+        {/* <Wrapper>{children}</Wrapper> */}
 
-          {children}
+        {children}
 
-          <Toaster />
-          <SonnerToaster />
-        </ClientProvider>
+        <Toaster />
+        <SonnerToaster />
       </ThemeProvider>
     </ClerkProvider>
   )
