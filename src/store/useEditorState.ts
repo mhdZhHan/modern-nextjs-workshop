@@ -1,10 +1,6 @@
 import { create } from "zustand"
 import { toast } from "sonner"
-import {
-  createNewPost,
-  deletePostById,
-  updatePost,
-} from "@/actions/post-actions"
+import { createNewPost, updatePost } from "@/actions/post-actions"
 
 import { z } from "zod"
 import { slugify } from "@/utils"
@@ -41,7 +37,7 @@ export const newPostSchema = z.object({
 
 export type NewPost = z.infer<typeof newPostSchema>
 
-type BlogStore = {
+type EditorStore = {
   editorState: "editor" | "publish"
   isSubmitting: boolean
   isDirty: boolean
@@ -57,10 +53,9 @@ type BlogStore = {
   // Form Submission
   publishPost: () => Promise<boolean>
   saveDraft: () => Promise<void>
-  deleteBlog: (id: string) => Promise<void>
 }
 
-export const useBlogStore = create<BlogStore>()((set, get) => ({
+export const useEditorStore = create<EditorStore>()((set, get) => ({
   editorState: "editor",
   isSubmitting: false,
   isDirty: false,
@@ -147,26 +142,7 @@ export const useBlogStore = create<BlogStore>()((set, get) => ({
     }
   },
 
-  saveDraft: async () => {
-    const { blogData } = get()
-    set({ isSubmitting: true })
-
-    try {
-      await createNewPost({
-        ...blogData,
-        status: "DRAFT",
-      })
-      toast.success("Draft saved successfully")
-      set({ isDirty: false })
-    } catch (error) {
-      console.error("Error saving draft:", error)
-      toast.error("Failed to save draft")
-    } finally {
-      set({ isSubmitting: false })
-    }
-  },
-
-  archivePost: async () => {
+  editBlogPost: async () => {
     const { blogData } = get()
 
     set({ isSubmitting: true })
@@ -186,15 +162,20 @@ export const useBlogStore = create<BlogStore>()((set, get) => ({
     }
   },
 
-  deleteBlog: async (id: string) => {
+  saveDraft: async () => {
+    const { blogData } = get()
     set({ isSubmitting: true })
 
     try {
-      await deletePostById(id)
-      toast.success("Blog post deleted successfully")
+      await createNewPost({
+        ...blogData,
+        status: "DRAFT",
+      })
+      toast.success("Draft saved successfully")
+      set({ isDirty: false })
     } catch (error) {
-      console.error("Error deleting post:", error)
-      toast.error("Failed to delete blog post")
+      console.error("Error saving draft:", error)
+      toast.error("Failed to save draft")
     } finally {
       set({ isSubmitting: false })
     }

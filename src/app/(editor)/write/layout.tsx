@@ -1,7 +1,7 @@
 "use client"
 
 import "@/app/styles/prosemirror.css"
-import { useBlogStore } from "@/store/useBlogStore"
+import { useEditorStore } from "@/store/useEditorState"
 
 export default function WriteLayout({
   editor,
@@ -10,6 +10,6 @@ export default function WriteLayout({
   publish: React.ReactNode
   editor: React.ReactNode
 }) {
-  const { editorState } = useBlogStore()
+  const { editorState } = useEditorStore()
   return <>{editorState === "editor" ? editor : publish}</>
 }

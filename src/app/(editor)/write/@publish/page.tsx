@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 
-import { useBlogStore } from "@/store/useBlogStore"
+import { useEditorStore } from "@/store/useEditorState"
 import { SHORT_DESCRIPTION_CHAR_LIMIT, TAGS_LIMIT } from "@/lib/constants"
 
 const PublishForm = () => {
@@ -22,7 +22,7 @@ const PublishForm = () => {
     updateBlogData,
     isSubmitting,
     publishPost,
-  } = useBlogStore()
+  } = useEditorStore()
 
   const handleClose = () => {
     setEditorState("editor")

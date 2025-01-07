@@ -8,14 +8,14 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import EditorHeader from "@/components/editor/editor-header"
 import Editor from "@/components/editor/noval-editor"
 
-import { useBlogStore } from "@/store/useBlogStore"
+import { useEditorStore } from "@/store/useEditorState"
 import { ACCEPTED_IMAGE_TYPES } from "@/lib/constants"
 import { uploadFileToStorage } from "@/utils/uploadFile"
 
 const BlogEditor = () => {
   const { session } = useSession()
   const { blogData, updateBlogData, bannerPreview, setBannerPreview } =
-    useBlogStore()
+    useEditorStore()
 
   const handleTitleKeyDown = (
     evt: React.KeyboardEvent<HTMLTextAreaElement>

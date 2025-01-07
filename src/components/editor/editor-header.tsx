@@ -6,10 +6,10 @@ import { ThemeToggle } from "@/components/common/theme-toggle"
 import { Button } from "@/components/ui/button"
 import NavLogo from "@/components/common/nav-logo"
 
-import { useBlogStore } from "@/store/useBlogStore"
+import { useEditorStore } from "@/store/useEditorState"
 
 const EditorHeader = () => {
-  const { setEditorState, blogData } = useBlogStore()
+  const { setEditorState, blogData } = useEditorStore()
 
   const handleChangeEditorState = () => {
     if (!blogData.banner) {
