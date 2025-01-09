@@ -4,11 +4,11 @@ import { toast } from "sonner"
 
 import { ThemeToggle } from "@/components/common/theme-toggle"
 import { Button } from "@/components/ui/button"
-import NavLogo from "@/components/common/nav-logo"
+import NavLogo from "@/components/common/nav/nav-logo"
 
 import { useEditorStore } from "@/store/useEditorState"
 
-const EditorHeader = () => {
+const EditorNavbar = () => {
   const { setEditorState, blogData } = useEditorStore()
 
   const handleChangeEditorState = () => {
@@ -53,4 +53,4 @@ const EditorHeader = () => {
     </header>
   )
 }
-export default EditorHeader
+export default EditorNavbar

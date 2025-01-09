@@ -5,7 +5,7 @@ import { JSONContent } from "novel"
 
 // components
 import { ScrollArea } from "@/components/ui/scroll-area"
-import EditorHeader from "@/components/editor/editor-header"
+import EditorNavbar from "@/components/common/nav/editor-navbar"
 import Editor from "@/components/editor/noval-editor"
 
 import { useEditorStore } from "@/store/useEditorState"
@@ -59,7 +59,7 @@ const BlogEditor = () => {
 
   return (
     <>
-      <EditorHeader />
+      <EditorNavbar />
 
       <ScrollArea className="mt-4 h-[calc(100vh-76.8px)] w-full">
         <div className="z-50 mx-auto w-full max-w-[900px] pb-8">

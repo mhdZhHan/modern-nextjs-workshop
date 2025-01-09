@@ -1,6 +1,5 @@
 import { NuqsAdapter } from "nuqs/adapters/next/app"
-
-import Header from "@/components/common/header"
+import Navbar from "@/components/common/nav/navbar"
 
 export default async function AppLayout({
   children,
@@ -9,7 +8,7 @@ export default async function AppLayout({
 }) {
   return (
     <>
-      <Header />
+      <Navbar />
 
       <NuqsAdapter>{children}</NuqsAdapter>
     </>

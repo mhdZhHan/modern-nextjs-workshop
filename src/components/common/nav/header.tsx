@@ -6,7 +6,7 @@ import { BookmarkIcon, Feather, House } from "lucide-react"
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 
 import { Button } from "@/components/ui/button"
-import { ThemeToggle } from "./theme-toggle"
+import { ThemeToggle } from "../theme-toggle"
 import NavLogo from "./nav-logo"
 
 const NAV_LINKS = [
